@@ -137,3 +137,7 @@ table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
   .ehr { grid-template-columns: 1fr 1fr; }
   .clock { min-width: 0; width: 100%; }
 }
+
+/* Honest-reading note beside the ASHA KPIs: the recall list is a ranking, not a calibrated risk. */
+.kpi.caveat { flex: 2 1 340px; background: #fdf6ee; border-color: #e8d9c4; }
+.kpi.caveat .l { font-size: 12px; line-height: 1.5; color: #6b5944; }

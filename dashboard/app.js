@@ -94,6 +94,10 @@ async function loadPatient(id) {
   const map = { karva_chauth_nirjala: "karva_chauth_nirjala", ramadan_roza: "ramadan_roza", navratri_phalahar: e.vrat_style === "ek_samay" ? "navratri_ek_samay" : "navratri_phalahar", ekadashi: "ekadashi" };
   $("#wiDay").value = map[nxt] || dt || "karva_chauth_nirjala";
   $("#wiGarba").checked = !!e.garba;
+  // The baseline is always "usual", so defaulting the scenario to "usual" too would open the panel
+  // showing a counterfactual against itself - identical curves, identical probabilities. For a patient
+  // on a sulfonylurea, open on the change a doctor would actually consider.
+  $("#wiSU").value = e.on_sulfonylurea ? "move_to_break_fast" : "usual";
   runWhatIf();
 }
 
@@ -238,7 +242,10 @@ async function loadAsha() {
   $("#ashaSummary").innerHTML = `
     <div class="kpi"><div class="v">${d.total}</div><div class="l">patients planning to fast</div></div>
     <div class="kpi"><div class="v">${hi}</div><div class="l">high priority (visit within 48 h)</div></div>
-    <div class="kpi"><div class="v">${pct(avg(su, "p_hypo_usual"))} → ${pct(avg(su, "p_hypo_if_dose_moved"))}</div><div class="l">mean hypo risk on SU, if the dose is moved to the fast-breaking meal</div></div>`;
+    <div class="kpi"><div class="v">${pct(avg(su, "p_hypo_usual"))} → ${pct(avg(su, "p_hypo_if_dose_moved"))}</div><div class="l">mean hypo risk on SU, if the dose is moved to the fast-breaking meal</div></div>
+    <div class="kpi caveat"><div class="l"><b>Read this as a ranking, not a probability.</b> The rehearsal
+      over-predicts how often a fast actually ends in hypoglycaemia — the safe direction for a recall list,
+      but the numbers are not calibrated. Validated on a small number of events; see the Model card.</div></div>`;
   const pri = { high: "▲ High", medium: "● Medium", low: "✓ Low" };
   $("#ashaTable").className = "data";
   $("#ashaTable").innerHTML = `<thead><tr><th>#</th><th>Patient</th><th>Ward</th><th>Language</th><th>Fast</th><th>Drug</th>
@@ -254,34 +261,52 @@ async function loadCard() {
   const m = await api("/api/model-card");
   const f3 = (x) => (x == null ? "–" : (+x).toFixed(3));
   const tiers = [["A_full", "A · CGM + smartwatch"], ["B_frugal", "B · 2 fingersticks/day + smartwatch"], ["C_minimal", "C · EHR + phone steps only"]];
-  const mrow = (key, lbl) => { const r = m.models[key] || {}; return `<tr><td>${lbl}</td><td class="num">${f3(r.auroc)}</td><td class="num">${f3(r.auprc)}</td><td class="num">${f3(r.prevalence)}</td><td class="num">${r.event_recall != null ? pct(r.event_recall) : "–"}</td><td class="num">${r.median_lead_min ?? "–"}</td><td class="num">${r.false_alarms_per_patient_day != null ? r.false_alarms_per_patient_day.toFixed(2) : "–"}</td><td class="num">${f3(r.ece)}</td></tr>`; };
-  const head = "<tr><th>Model</th><th>AUROC</th><th>AUPRC</th><th>Prevalence</th><th>Event recall</th><th>Median lead (min)</th><th>False alarms / pt-day</th><th>ECE</th></tr>";
+  const mrow = (key, lbl) => { const r = m.models[key] || {}; return `<tr><td>${lbl}</td><td class="num">${f3(r.auroc)}</td><td class="num">${f3(r.auprc)}${ci(r)}</td><td class="num">${f3(r.prevalence)}</td><td class="num">${r.precision_at_20 != null ? r.precision_at_20.toFixed(2) : "–"}</td><td class="num">${r.event_recall != null ? pct(r.event_recall) : "–"}</td><td class="num">${r.false_alarms_per_patient_day != null ? r.false_alarms_per_patient_day.toFixed(2) : "–"}</td><td class="num">${f3(r.ece)}</td></tr>`; };
+  const head = "<tr><th>Model</th><th>AUROC</th><th>AUPRC <span class='hint'>[95% CI]</span></th><th>Prevalence</th><th>Precision@20</th><th>Event recall</th><th>False alarms / pt-day</th><th>ECE</th></tr>";
   const fc = m.forecast, cov = m.conformal.horizons;
+  const bd = m.benchmark_difficulty || {}, hy = m.models["A_full/full/hypo"] || {};
+  const ci = (r) => { const c = r && r.auprc_ci95; return c && c[0] != null ? ` <span class="hint">[${c[0].toFixed(2)}–${c[1].toFixed(2)}]</span>` : ""; };
   $("#cardBody").innerHTML = `
     <div class="panel prose"><h3>Intended use & honesty statement</h3>
       <ul><li><b>Intended user:</b> a registered medical practitioner (and, for the recall list, ASHAs under supervision). Outputs inform, they do not direct treatment. Under the 2025 CDSCO draft software guidance this is likely Class B decision-support software.</li>
       <li><b>Data:</b> ${m.cohort.n_patients} synthetic Indian adults with T2D, ${m.cohort.days} days each. No real patient data were used. Evaluation: ${m.cohort.evaluation}.</li>
-      <li><b>Known limits:</b> the physiology and the twin share a model family, so absolute accuracy here is optimistic. Validation on open CGM data (e.g. ShanghaiT2DM, CGMacros) and then on an Indian prospective cohort is required.</li></ul></div>
+      <li><b>How hard the test is:</b> the virtual body runs a <i>different</i> model from the twin (3-compartment gut, interstitial insulin delay, circadian insulin sensitivity, renal excretion, incretin — the twin models none of them), so these numbers include model misspecification, not just parameter error. Eating is deliberately messy: the correlation between the festival meal plan and what was actually eaten is ${(bd.plan_vs_logged_carb_corr_2h ?? 0).toFixed(2)}, with ${pct(bd.real_intake_that_was_unplanned)} of intake unplanned, so the calendar is a prior and not an oracle.</li>
+      <li><b>Known limits:</b> synthetic data only — these are upper bounds, not clinical evidence. Only ${hy.patients_with_events ?? "–"} of ${hy.n_patients ?? "–"} patients ever had a hypoglycaemic event, so the confidence intervals are wide (shown below). The festival calendar adds little <i>as model features</i>; its value is the Vrat Rehearsal, days earlier. The drift monitor does not yet work well enough to deploy. Validation on open CGM data (ShanghaiT2DM, CGMacros) and then an Indian prospective cohort is required.</li></ul></div>
     <div class="panel"><h3>2-hour adverse-event prediction (out-of-fold, patient-grouped)</h3><table class="mtable">${head}
       ${tiers.map(([k, l]) => mrow(`${k}/full/hypo`, `Hypo · ${l}`)).join("")}
       ${tiers.map(([k, l]) => mrow(`${k}/full/hyper`, `Hyper · ${l}`)).join("")}
       ${mrow("A_full/no_twin/hypo", "Hypo · A without twin features")}${mrow("A_full/no_calendar/hypo", "Hypo · A without festival calendar")}
-      ${mrow("A_full/twin_only/hypo", "Hypo · twin physics only")}${mrow("A_full/rule_cgm_trend/hypo", "Hypo · CGM trend rule (baseline)")}</table></div>
+      ${mrow("A_full/twin_only/hypo", "Hypo · twin physics only")}${mrow("A_full/rule_cgm_trend/hypo", "Hypo · CGM trend rule (baseline)")}
+      ${mrow("A_full/trivial_calendar_baseline/hypo", "Hypo · 4-feature timetable baseline (no glucose, no twin)")}
+      ${mrow("A_full/trivial_calendar_baseline/hyper", "Hyper · 4-feature timetable baseline (no glucose, no twin)")}</table>
+      <p class="hint">The last two rows are the baseline that keeps us honest: planned carbohydrate, HbA1c and time
+      of day, with no glucose measurement, no wearable and no twin. If it came close to the full model, this
+      benchmark would be measuring a meal timetable rather than physiology.</p></div>
     <div class="card-grid">
       <div class="panel"><h3>Graceful degradation across sensor tiers</h3><img src="/figures/degradation.png" alt="Degradation chart"/></div>
       <div class="panel"><h3>Ablation</h3><img src="/figures/ablation_hypo.png" alt="Ablation chart"/></div>
       <div class="panel"><h3>Forecast accuracy</h3><img src="/figures/forecast_rmse.png" alt="Forecast RMSE"/>
         <table class="mtable"><tr><th>Horizon</th><th>Twin RMSE</th><th>Persistence</th><th>Clarke A</th><th>Clarke A+B</th></tr>
         ${Object.entries(fc).map(([h, v]) => `<tr><td>${h}</td><td class="num">${v.twin_rmse.toFixed(1)}</td><td class="num">${v.persistence_rmse.toFixed(1)}</td><td class="num">${pct(v.clarke_A)}</td><td class="num">${pct(v.clarke_AB)}</td></tr>`).join("")}</table></div>
-      <div class="panel"><h3>Uncertainty that keeps its promise</h3>
-        <table class="mtable"><tr><th>Horizon</th><th>Raw particle 10–90% coverage</th><th>Conformal coverage (target 90%)</th><th>Margin (mg/dL)</th></tr>
-        ${cov.map((c) => `<tr><td>${c.horizon_min} min</td><td class="num">${pct(c.raw_10_90_coverage)}</td><td class="num">${pct(c.conformal_coverage)}</td><td class="num">${c.margin_mgdl.toFixed(1)}</td></tr>`).join("")}</table>
-        <h3 style="margin-top:14px">Twin self-check (drift)</h3>
-        <table class="mtable"><tr><td>Mean NIS on illness days</td><td class="num">${f3(m.drift.nis_mean_illness_days)}</td></tr>
-        <tr><td>Mean NIS on other days</td><td class="num">${f3(m.drift.nis_mean_other_days)}</td></tr>
-        <tr><td>Flag rule</td><td>${m.drift.flag_rule}</td></tr>
+      <div class="panel"><h3>Uncertainty: marginal vs conditional coverage</h3>
+        <p class="hint">A 90% band that is 90% <i>on average</i> can be far less than that in the range a clinician is
+        actually watching. Both are reported; the chart above the table is the 2-hour horizon.</p>
+        <img src="/figures/conformal_coverage.png" alt="Conformal coverage by outcome range"/>
+        <table class="mtable"><tr><th>Horizon</th><th>Raw 10–90%</th><th>Split: overall</th><th>Split: &gt;250</th><th>Mondrian: overall</th><th>Mondrian: &gt;250</th></tr>
+        ${cov.map((c) => { const s = c.split_conformal || {}, mo = c.mondrian_conformal || {};
+          return `<tr><td>${c.horizon_min} min</td><td class="num">${pct(c.raw_10_90_coverage)}</td>
+            <td class="num">${pct(s.coverage)}</td><td class="num">${s.coverage_outcome_gt250 != null ? pct(s.coverage_outcome_gt250) : "–"}</td>
+            <td class="num">${pct(mo.coverage)}</td><td class="num">${mo.coverage_outcome_gt250 != null ? pct(mo.coverage_outcome_gt250) : "–"}</td></tr>`; }).join("")}</table>
+        <h3 style="margin-top:14px">Twin self-check (drift) — a negative result</h3>
+        <p class="hint">${esc(m.drift.honest_assessment || "")}</p>
+        <table class="mtable"><tr><td>AUROC for illness days (relative NIS)</td><td class="num">${f3(m.drift.auroc_relative_nis_for_illness ?? m.drift.auroc_daily_nis_for_illness)}</td></tr>
+        <tr><td>Flag rule</td><td>${esc(m.drift.flag_rule)}</td></tr>
         <tr><td>Illness days flagged</td><td class="num">${pct(m.drift.sensitivity_illness_days)}</td></tr>
         <tr><td>Other days flagged</td><td class="num">${pct(m.drift.false_flag_rate_other_days)}</td></tr></table></div>
+      <div class="panel"><h3>Worklist precision — the number a clinic feels</h3>
+        <img src="/figures/precision_at_k.png" alt="Precision at k"/></div>
+      <div class="panel"><h3>How hard is the benchmark?</h3>
+        <img src="/figures/benchmark_difficulty.png" alt="Benchmark difficulty"/></div>
       <div class="panel"><h3>Fairness audit</h3><img src="/figures/fairness.png" alt="Fairness chart"/></div>
       <div class="panel"><h3>Example: a fasting day</h3><img src="/figures/example_fasting_day.png" alt="Example fasting day"/></div>
     </div>`;
