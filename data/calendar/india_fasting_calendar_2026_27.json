@@ -1,0 +1,19 @@
+{
+  "_note": "Dates are from public festival calendars (Boldsky Oct-2026 calendar; Wego Ramadan 2027 projection). Lunar dates shift by region and moon sighting - verify against a regional panchang / local moon-sighting committee before clinical use.",
+  "events": [
+    {"name": "Indira Ekadashi", "type": "ekadashi", "start": "2026-10-06", "end": "2026-10-06", "traditions": ["navratri", "karva_chauth"]},
+    {"name": "Sharad Navratri", "type": "navratri_phalahar", "start": "2026-10-11", "end": "2026-10-19", "traditions": ["navratri", "karva_chauth"], "night_activity": "garba_dandiya"},
+    {"name": "Dussehra", "type": "feast", "start": "2026-10-20", "end": "2026-10-20", "traditions": ["navratri", "karva_chauth", "none"]},
+    {"name": "Papankusha Ekadashi", "type": "ekadashi", "start": "2026-10-22", "end": "2026-10-22", "traditions": ["navratri", "karva_chauth"]},
+    {"name": "Karva Chauth", "type": "karva_chauth_nirjala", "start": "2026-10-29", "end": "2026-10-29", "traditions": ["karva_chauth"], "fast_break_time": "20:15"},
+    {"name": "Diwali", "type": "feast", "start": "2026-11-08", "end": "2026-11-08", "traditions": ["navratri", "karva_chauth", "none"]},
+    {"name": "Ramadan", "type": "ramadan_roza", "start": "2027-02-09", "end": "2027-03-09", "traditions": ["ramadan"], "sehri_time": "05:15", "iftar_time": "18:20"},
+    {"name": "Eid al-Fitr", "type": "feast", "start": "2027-03-10", "end": "2027-03-10", "traditions": ["ramadan"]}
+  ],
+  "observation_windows": {
+    "navratri": "2026-10-04",
+    "karva_chauth": "2026-10-04",
+    "none": "2026-10-04",
+    "ramadan": "2027-02-04"
+  }
+}

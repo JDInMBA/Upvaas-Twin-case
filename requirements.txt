@@ -1,0 +1,13 @@
+# Pinned with upper bounds so a judge's fresh install matches the environment these results were
+# produced in. NumPy 2.x and scikit-learn 1.x both ship breaking changes between minor versions.
+# core (pipeline, twin, models)
+numpy>=1.24,<3.0
+pandas>=2.0,<3.0
+scikit-learn>=1.3,<2.0
+matplotlib>=3.7,<4.0
+joblib>=1.3,<2.0
+# dashboard API (optional: serve.py falls back to a standard-library server if these are missing)
+fastapi>=0.110,<1.0
+uvicorn>=0.27,<1.0
+# tests
+pytest>=7.4,<9.0

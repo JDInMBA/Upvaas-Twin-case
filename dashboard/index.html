@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UPVAAS Twin Console</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+  <!-- offline fallback (e.g. a venue without internet): put plotly.min.js in dashboard/vendor/ -->
+  <script>window.Plotly || document.write('<script src="/static/vendor/plotly.min.js"><\/script>')</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">उ</div>
+      <div>
+        <div class="title">UPVAAS-Twin</div>
+        <div class="sub">Festival-aware metabolic digital twin · clinician console</div>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="clinic">Patients</button>
+      <button class="tab" data-view="asha">ASHA recall list</button>
+      <button class="tab" data-view="card">Model card</button>
+    </nav>
+    <div class="clock">
+      <button id="play" title="Replay time">▶</button>
+      <input id="slider" type="range" min="0" max="100" value="0" aria-label="Simulation clock" />
+      <div id="clockLabel" class="clock-label">—</div>
+    </div>
+  </header>
+
+  <main id="clinic" class="view active">
+    <aside class="roster">
+      <div class="roster-head">
+        <span>Patients by 2-h risk</span>
+        <input id="search" placeholder="Search name / ID" />
+      </div>
+      <div class="filters">
+        <label><input type="checkbox" id="fOnlySU" /> On sulfonylurea</label>
+        <label><input type="checkbox" id="fFasting" /> Fasting today</label>
+      </div>
+      <div id="roster"></div>
+    </aside>
+
+    <section class="workspace">
+      <div id="phead" class="phead"></div>
+
+      <div class="grid-risk">
+        <div class="risk-card" id="riskHypo"></div>
+        <div class="risk-card" id="riskHyper"></div>
+        <div class="twin-card" id="twinCard"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Glucose: last 18 h and the twin's 2-hour forecast</h3>
+          <label class="toggle"><input type="checkbox" id="showTruth" /> reveal what actually happened</label>
+        </div>
+        <div id="chartGlucose" class="chart"></div>
+        <div id="chartRisk" class="chart small"></div>
+        <div id="chartWear" class="chart small"></div>
+      </div>
+
+      <div class="panel rehearsal">
+        <div class="panel-head">
+          <h3>Vrat Rehearsal: what if tomorrow…</h3>
+          <span class="hint">Replays the next 36 h on every physiology still consistent with this patient's data</span>
+        </div>
+        <div class="wi-controls">
+          <label>Tomorrow
+            <select id="wiDay">
+              <option value="karva_chauth_nirjala">Karva Chauth (nirjala, no food/water till moonrise)</option>
+              <option value="ramadan_roza">Ramadan roza (sehri → iftar)</option>
+              <option value="navratri_ek_samay">Navratri ek-samay (one meal after aarti)</option>
+              <option value="navratri_phalahar">Navratri phalahar (fruit / sabudana)</option>
+              <option value="ekadashi">Ekadashi</option>
+              <option value="normal">Normal day</option>
+            </select>
+          </label>
+          <label>Sulfonylurea
+            <select id="wiSU">
+              <option value="usual">Take as usual (morning)</option>
+              <option value="half">Halve the dose</option>
+              <option value="move_to_break_fast">Move to fast-breaking meal</option>
+              <option value="skip">Skip on fasting day</option>
+            </select>
+          </label>
+          <label>Basal insulin
+            <select id="wiIns">
+              <option value="0">No change</option><option value="-0.2">−20 %</option><option value="-0.3">−30 %</option>
+            </select>
+          </label>
+          <label class="chk"><input type="checkbox" id="wiGI" /> Low-GI swap for festival foods</label>
+          <label class="chk"><input type="checkbox" id="wiWalk" /> 20-min walk after breaking fast</label>
+          <label class="chk"><input type="checkbox" id="wiGarba" /> Garba / dandiya at night</label>
+          <button id="wiRun" class="primary">Rehearse</button>
+        </div>
+        <div class="wi-out">
+          <div id="chartWhatIf" class="chart"></div>
+          <div id="wiSummary" class="wi-summary"></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Twin fidelity (self-check)</h3>
+            <span class="hint">Normalised innovation, relative to this patient's own first-week baseline: how surprised the twin is by reality each day</span></div>
+          <div id="chartNis" class="chart small"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Static record (EHR, genetics, medication)</h3>
+            <button id="fhirBtn" class="ghost">Export FHIR R4 bundle</button></div>
+          <div id="ehr" class="ehr"></div>
+        </div>
+      </div>
+      <footer class="disclaimer">Research prototype on synthetic patients. Not a medical device. Outputs are
+        decision support for a registered medical practitioner.</footer>
+    </section>
+  </main>
+
+  <main id="asha" class="view">
+    <section class="workspace wide">
+      <div class="panel">
+        <div class="panel-head"><h3>Pre-festival "Vrat Saathi" recall list</h3>
+          <span class="hint">Every patient's twin rehearses their next fast with usual habits. ASHAs visit the highest risk first.</span></div>
+        <div id="ashaSummary" class="kpis"></div>
+        <div class="table-wrap"><table id="ashaTable"></table></div>
+      </div>
+    </section>
+  </main>
+
+  <main id="card" class="view">
+    <section class="workspace wide" id="cardBody"></section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

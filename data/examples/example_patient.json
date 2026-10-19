@@ -1,0 +1,23 @@
+{
+ "patient_id": "UPV-0001",
+ "sex": "F",
+ "age": 67,
+ "weight_kg": 63.8,
+ "bmi": 26.3,
+ "whtr": 0.57,
+ "diabetes_duration_y": 6.6,
+ "hba1c": 7.4,
+ "fpg": 140,
+ "alt": 29,
+ "tyg": 9.27,
+ "egfr": 90,
+ "neuropathy": false,
+ "tcf7l2_rs7903146_T": 0,
+ "cyp2c9": "*2/*3",
+ "prs_t2d_z": -0.53,
+ "on_metformin": true,
+ "on_sulfonylurea": true,
+ "su_dose_frac": 0.25,
+ "on_basal_insulin": false,
+ "basal_insulin_u": 0.0
+}

@@ -1,0 +1,366 @@
+{
+ "resourceType": "Bundle",
+ "id": "52d562a0-5eaa-42bd-82c4-f0e3d44047fe",
+ "type": "collection",
+ "timestamp": "2026-10-20T01:17:13.901478+05:30",
+ "entry": [
+  {
+   "fullUrl": "urn:uuid:UPV-0002",
+   "resource": {
+    "resourceType": "Patient",
+    "id": "UPV-0002",
+    "identifier": [
+     {
+      "system": "https://healthid.abdm.gov.in",
+      "value": "SYNTH-69021645032970",
+      "type": {
+       "text": "ABHA number (SYNTHETIC)"
+      }
+     }
+    ],
+    "name": [
+     {
+      "text": "Asha Singh"
+     }
+    ],
+    "gender": "female",
+    "address": [
+     {
+      "state": "Tamil Nadu",
+      "country": "IN"
+     }
+    ],
+    "communication": [
+     {
+      "language": {
+       "text": "Tamil"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:c9febbeb-a266-4bd4-9d89-9e7f2d6f2200",
+   "resource": {
+    "resourceType": "Condition",
+    "id": "c9febbeb-a266-4bd4-9d89-9e7f2d6f2200",
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "code": {
+     "coding": [
+      {
+       "system": "http://snomed.info/sct",
+       "code": "44054006",
+       "display": "Type 2 diabetes mellitus"
+      }
+     ]
+    },
+    "onsetString": "0.5 years ago"
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:d7031aba-9911-40fe-b23d-96802ed298b7",
+   "resource": {
+    "resourceType": "Observation",
+    "id": "d7031aba-9911-40fe-b23d-96802ed298b7",
+    "status": "final",
+    "category": [
+     {
+      "coding": [
+       {
+        "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "code": "laboratory"
+       }
+      ]
+     }
+    ],
+    "code": {
+     "coding": [
+      {
+       "system": "http://loinc.org",
+       "code": "4548-4",
+       "display": "Hemoglobin A1c"
+      }
+     ],
+     "text": "Hemoglobin A1c"
+    },
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "effectiveDateTime": "2026-10-20T01:17:13.901478+05:30",
+    "valueQuantity": {
+     "value": 6.0,
+     "unit": "%"
+    }
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:0c0a15ce-133b-479a-bee7-3c8d24ce1627",
+   "resource": {
+    "resourceType": "Observation",
+    "id": "0c0a15ce-133b-479a-bee7-3c8d24ce1627",
+    "status": "final",
+    "category": [
+     {
+      "coding": [
+       {
+        "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "code": "laboratory"
+       }
+      ]
+     }
+    ],
+    "code": {
+     "coding": [
+      {
+       "system": "http://loinc.org",
+       "code": "33914-3",
+       "display": "eGFR"
+      }
+     ],
+     "text": "eGFR"
+    },
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "effectiveDateTime": "2026-10-20T01:17:13.901478+05:30",
+    "valueQuantity": {
+     "value": 79,
+     "unit": "mL/min/1.73m2"
+    }
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:b22513a2-f1c6-467a-a3d5-0901fdd34252",
+   "resource": {
+    "resourceType": "Observation",
+    "id": "b22513a2-f1c6-467a-a3d5-0901fdd34252",
+    "status": "final",
+    "category": [
+     {
+      "coding": [
+       {
+        "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "code": "vital-signs"
+       }
+      ]
+     }
+    ],
+    "code": {
+     "coding": [
+      {
+       "system": "http://loinc.org",
+       "code": "8867-4",
+       "display": "Heart rate (resting)"
+      }
+     ],
+     "text": "Heart rate (resting)"
+    },
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "effectiveDateTime": "2026-10-20T01:17:13.901478+05:30",
+    "valueQuantity": {
+     "value": 65,
+     "unit": "/min"
+    }
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:44482422-2803-4a77-929f-06ee653aa34a",
+   "resource": {
+    "resourceType": "Observation",
+    "id": "44482422-2803-4a77-929f-06ee653aa34a",
+    "status": "final",
+    "category": [
+     {
+      "coding": [
+       {
+        "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "code": "laboratory"
+       }
+      ]
+     }
+    ],
+    "code": {
+     "text": "CYP2C9 genotype (pharmacogenomic)"
+    },
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "valueString": "*1/*1"
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:ff69508e-fd92-4185-8d5f-1f9a36a1094b",
+   "resource": {
+    "resourceType": "Observation",
+    "id": "ff69508e-fd92-4185-8d5f-1f9a36a1094b",
+    "status": "final",
+    "code": {
+     "text": "TCF7L2 rs7903146 T-allele count"
+    },
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "valueInteger": 0
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:471f33ae-2139-4fb5-af6a-5b03dfca6ebd",
+   "resource": {
+    "resourceType": "MedicationStatement",
+    "id": "471f33ae-2139-4fb5-af6a-5b03dfca6ebd",
+    "status": "active",
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "medicationCodeableConcept": {
+     "text": "glimepiride"
+    },
+    "dosage": [
+     {
+      "text": "1.0 mg once daily before breakfast"
+     }
+    ]
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:e549c3cf-6d14-40e4-91d8-9583f35111e1",
+   "resource": {
+    "resourceType": "MedicationStatement",
+    "id": "e549c3cf-6d14-40e4-91d8-9583f35111e1",
+    "status": "active",
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "medicationCodeableConcept": {
+     "text": "metformin"
+    },
+    "dosage": [
+     {
+      "text": "1000.0 mg/day"
+     }
+    ]
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:5b677576-ee17-4df7-b071-ac3335a7e41f",
+   "resource": {
+    "resourceType": "RiskAssessment",
+    "id": "5b677576-ee17-4df7-b071-ac3335a7e41f",
+    "status": "preliminary",
+    "subject": {
+     "reference": "Patient/UPV-0002"
+    },
+    "occurrenceDateTime": "2026-10-20T01:17:13.901478+05:30",
+    "method": {
+     "text": "UPVAAS-Twin hybrid digital twin v0.1 (research prototype, not a medical device)"
+    },
+    "prediction": [
+     {
+      "outcome": {
+       "coding": [
+        {
+         "system": "http://snomed.info/sct",
+         "code": "302866003",
+         "display": "Hypoglycemia"
+        }
+       ]
+      },
+      "probabilityDecimal": 0.003,
+      "whenRange": {
+       "high": {
+        "value": 120,
+        "unit": "min"
+       }
+      }
+     },
+     {
+      "outcome": {
+       "coding": [
+        {
+         "system": "http://snomed.info/sct",
+         "code": "80394007",
+         "display": "Hyperglycemia"
+        }
+       ]
+      },
+      "probabilityDecimal": 0.001,
+      "whenRange": {
+       "high": {
+        "value": 120,
+        "unit": "min"
+       }
+      }
+     }
+    ],
+    "note": [
+     {
+      "text": "Decision support for a registered medical practitioner. Uncertainty band and drivers available in the clinician dashboard."
+     }
+    ]
+   }
+  },
+  {
+   "fullUrl": "urn:uuid:9ffbcba8-f19b-4d2f-a89f-b26679885303",
+   "resource": {
+    "resourceType": "Consent",
+    "id": "9ffbcba8-f19b-4d2f-a89f-b26679885303",
+    "status": "active",
+    "scope": {
+     "coding": [
+      {
+       "system": "http://terminology.hl7.org/CodeSystem/consentscope",
+       "code": "patient-privacy"
+      }
+     ]
+    },
+    "category": [
+     {
+      "text": "ABDM consent artefact (HIE-CM) - SYNTHETIC"
+     }
+    ],
+    "patient": {
+     "reference": "Patient/UPV-0002"
+    },
+    "dateTime": "2026-10-20T01:17:13.901478+05:30",
+    "provision": {
+     "type": "permit",
+     "period": {
+      "start": "2026-10-20T01:17:13.901478+05:30",
+      "end": "2027-01-18T01:17:13.901478+05:30"
+     },
+     "purpose": [
+      {
+       "system": "https://projecteka.in/fhir/purpose",
+       "code": "CAREMGT",
+       "display": "Care Management"
+      }
+     ],
+     "data": [
+      {
+       "meaning": "related",
+       "reference": {
+        "reference": "Condition/c9febbeb-a266-4bd4-9d89-9e7f2d6f2200"
+       }
+      },
+      {
+       "meaning": "related",
+       "reference": {
+        "reference": "Observation/d7031aba-9911-40fe-b23d-96802ed298b7"
+       }
+      },
+      {
+       "meaning": "related",
+       "reference": {
+        "reference": "Observation/0c0a15ce-133b-479a-bee7-3c8d24ce1627"
+       }
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

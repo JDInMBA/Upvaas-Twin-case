@@ -1,0 +1,52 @@
+name: tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    env:
+      # bit-exact reproducibility: without this a few metrics move in the 4th decimal
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Unit tests (physiology, calendar, metrics, FHIR, leakage regressions)
+        run: python -m pytest -q tests
+
+      - name: End-to-end smoke build (60 patients, 3 sensor tiers, 5-fold CV)
+        run: python scripts/run_pipeline.py --quick --tag _ci
+
+      - name: README results tables are not stale
+        run: python scripts/update_readme.py --check
+
+      - name: Architecture diagram and slide deck build from the metrics file
+        run: |
+          python docs/make_architecture.py
+          cp reports/metrics_ci.json reports/metrics.json
+          python docs/make_presentation.py
+
+      - name: Check the dashboard API starts and serves a patient
+        run: |
+          python serve.py 8123 &
+          for i in $(seq 1 40); do curl -sf http://localhost:8123/api/patients >/dev/null && break; sleep 2; done
+          curl -sf http://localhost:8123/api/patients | head -c 300
+          curl -sf http://localhost:8123/api/model-card >/dev/null
