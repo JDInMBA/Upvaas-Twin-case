@@ -56,8 +56,17 @@ def main() -> int:
          "Add a meal schedule the model already knows and the prediction task quietly becomes a timetable",
          "lookup. Both shortcuts are common, and both inflate results substantially. This table is how much.",
          "",
-         "| Setting | Body model | Eating | plan↔reality carb r | Hypo AUPRC (tier A) | Hyper AUPRC (tier A) | Twin RMSE @120 min |",
-         "|---|---|---|---|---|---|---|"]
+         "> **Read AUPRC across rows with care.** Making the simulation easier also changes how often events",
+         "> happen — the hypoglycaemia base rate varies about two-fold across these settings — and AUPRC moves",
+         "> with prevalence. The prevalence-adjusted **lift** (AUPRC ÷ base rate) and the **forecast RMSE** are",
+         "> the columns that compare like with like.",
+         "",
+         "| Setting | Body model | Eating | plan↔reality carb r | Hypo base rate | Hypo AUPRC | Hypo lift | Hyper lift | Twin RMSE @120 min |",
+         "|---|---|---|---|---|---|---|---|---|"]
+
+    def lift(r):
+        p = r.get("prevalence") or 0
+        return (r.get("auprc") or 0) / p if p else None
 
     for tag, lab, m in have:
         bd = m.get("benchmark_difficulty", {})
@@ -67,31 +76,47 @@ def main() -> int:
         meals = "**messy**" if bd.get("realistic_meals") else "near-oracle"
         bold = "**" if tag == "_q_hard" else ""
         L.append(f"| {bold}{lab}{bold} | {body} | {meals} | {_f(bd.get('plan_vs_logged_carb_corr_2h'), 2)} | "
-                 f"{_f(hy.get('auprc'))} | {_f(hp.get('auprc'))} | "
+                 f"{hy.get('prevalence', 0):.2%} | {_f(hy.get('auprc'))} | "
+                 f"{_f(lift(hy), 1)}× | {_f(lift(hp), 1)}× | "
                  f"{m['forecast']['120min']['twin_rmse']:.0f} mg/dL |")
 
-    hard = dict(have)[RUNS[0][0]] if RUNS[0][0] in dict((t, m) for t, _, m in have) else have[0][2]
-    both = next((m for t, _, m in have if t == "_q_both"), None)
+    by_tag = {t: m for t, _, m in have}
+    hard = by_tag.get("_q_hard", have[0][2])
+    both = by_tag.get("_q_both")
     L.append("")
+    matched = by_tag.get("_q_matched")
+    easy = by_tag.get("_q_easy")
+    h_r = hard["forecast"]["120min"]["twin_rmse"]
+    L += ["## What each shortcut is worth", ""]
     if both:
-        h_hy = hard["models"]["A_full/full/hypo"]["auprc"]
-        b_hy = both["models"]["A_full/full/hypo"]["auprc"]
-        h_hp = hard["models"]["A_full/full/hyper"]["auprc"]
-        b_hp = both["models"]["A_full/full/hyper"]["auprc"]
-        h_r = hard["forecast"]["120min"]["twin_rmse"]
         b_r = both["forecast"]["120min"]["twin_rmse"]
-        L += ["## The cost of a generous benchmark", "",
-              f"Running the same twin against its own equations on a predictable meal schedule would have let us",
-              f"report **hypoglycaemia AUPRC {b_hy:.3f} instead of {h_hy:.3f}** "
-              f"({b_hy / max(h_hy, 1e-9):.1f}× higher), **hyperglycaemia AUPRC {b_hp:.3f} instead of "
-              f"{h_hp:.3f}**, and a **2-hour forecast RMSE of {b_r:.0f} mg/dL instead of {h_r:.0f}**.",
-              "",
-              f"A 2-hour glucose forecast error of {b_r:.0f} mg/dL would be well ahead of the published state of the",
-              "art, which is roughly 30–40 mg/dL. That is the tell: when a simulation study reports forecast",
-              "errors far below what anyone achieves on real CGM data, the simulator is usually the reason.",
-              "",
-              "We report the hard numbers in the README and keep this file so the difference is auditable.",
-              ""]
+        L += [f"**Forecast error is the cleanest comparison**, because it does not depend on how often events happen.",
+              f"Taking both shortcuts moves the twin's 2-hour RMSE from **{h_r:.0f} mg/dL to {b_r:.0f} mg/dL** — a "
+              f"{(1 - b_r / h_r):.0%} reduction bought entirely by making the simulation kinder.", ""]
+        if easy and matched:
+            e_r = easy["forecast"]["120min"]["twin_rmse"]
+            m_r = matched["forecast"]["120min"]["twin_rmse"]
+            L += [f"The two shortcuts are not equal. Predictable eating alone takes RMSE to **{e_r:.0f} mg/dL**; "
+                  f"removing model misspecification alone barely moves it (**{m_r:.0f} mg/dL**). For a 2-hour "
+                  "horizon, knowing what the patient is about to eat matters more than having the right equations.", ""]
+        L += [f"A 2-hour glucose forecast error of {b_r:.0f} mg/dL would sit well ahead of the published state of the "
+              "art, which is roughly 30–40 mg/dL on real CGM data. That is the tell: when a simulation study reports "
+              "forecast errors far below what anyone achieves in the clinic, the simulator is usually the reason.", ""]
+    if matched:
+        h_l = (hard["models"]["A_full/full/hypo"]["auprc"] or 0) / max(
+            hard["models"]["A_full/full/hypo"]["prevalence"] or 1e-9, 1e-9)
+        m_l = (matched["models"]["A_full/full/hypo"]["auprc"] or 0) / max(
+            matched["models"]["A_full/full/hypo"]["prevalence"] or 1e-9, 1e-9)
+        L += [f"**On discrimination, model misspecification is the expensive one.** Letting the body run the twin's "
+              f"own equations lifts hypoglycaemia detection from **{h_l:.0f}× the base rate to {m_l:.0f}×** — the twin "
+              "suddenly knows the patient exactly, because the patient was built from its own assumptions.", ""]
+    L += ["### Caveats on this table", "",
+          "* These are 60-patient runs, so the rarest cell (hypoglycaemia under the easiest settings) rests on very "
+          "few events and its lift estimate is unstable. Directions are meaningful; third decimals are not.",
+          "* Making the simulation easier changes event rates as well as predictability, which is exactly why "
+          "prevalence is printed beside AUPRC rather than left implicit.",
+          "",
+          "We report the hard numbers in the README and keep this file so the difference is auditable.", ""]
     L += ["## Reproducing this table", "", "```bash", "make ablations                      # runs all four settings",
           "python scripts/compare_ablations.py  # regenerates this file", "```", "",
           "Each run writes its own `reports/metrics_*.json`, so every number above can be traced to a file.",
