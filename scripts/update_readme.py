@@ -201,7 +201,7 @@ def render(m: dict) -> str:
                  "We ship it as the hook a CDSCO Algorithm Change Protocol would attach to, and report it as "
                  "**not yet good enough to deploy**.\n")
     L.append(f"*Full pipeline runtime: {m.get('runtime_sec', 0) / 60:.0f} min on a laptop CPU "
-             "(`--quick` builds 60 patients in about 5).*")
+             "(`--quick` builds 60 patients in about 4).*")
     return "\n".join(L)
 
 

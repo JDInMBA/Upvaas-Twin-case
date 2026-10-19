@@ -154,7 +154,7 @@ Accuracy figures mean nothing without this, so it comes first.
 
 | Sensor tier | AUROC | AUPRC <sub>[95% CI]</sub> | AUPRC without the twin | precision@20 | event recall | false alarms / patient-day |
 |---|---|---|---|---|---|---|
-| A · CGM + watch | 0.942 | 0.603 <sub>[0.58–0.63]</sub> | 0.567 | 0.99 | 98% | 4.69 |
+| A · CGM + watch | 0.942 | 0.603 <sub>[0.57–0.63]</sub> | 0.567 | 0.99 | 98% | 4.69 |
 | **B · 2 fingersticks/day + watch** | 0.935 | **0.573** <sub>[0.54–0.60]</sub> | 0.483 | 0.97 | 95% | 4.95 |
 | C · EHR + phone only | 0.913 | 0.448 <sub>[0.41–0.48]</sub> | 0.397 | 0.85 | 90% | 6.20 |
 
@@ -209,7 +209,7 @@ Across sulfonylurea-treated fasters, moving the dose to the fast-breaking meal l
 
 The normalised-innovation monitor detects illness days with AUROC only **0.53** (33% sensitivity at a 29% false-flag rate). We ship it as the hook a CDSCO Algorithm Change Protocol would attach to, and report it as **not yet good enough to deploy**.
 
-*Full pipeline runtime: 101 min on a laptop CPU (`--quick` builds 60 patients in about 5).*
+*Full pipeline runtime: 15 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
 <!-- RESULTS:END -->
 
 ## 8. Honest limits

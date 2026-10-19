@@ -7,10 +7,10 @@ export OMP_NUM_THREADS = 1
 setup:            ## create a virtual environment and install dependencies
 	$(PY) -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
 
-pipeline:         ## full run: 200 patients x 28 days, 3 sensor tiers, 5-fold CV (~100 min)
+pipeline:         ## full run: 200 patients x 28 days, 3 sensor tiers, 5-fold CV (~15 min)
 	$(PY) scripts/run_pipeline.py
 
-quick:            ## smoke test: 60 patients (~5 min)
+quick:            ## smoke test: 60 patients (~4 min)
 	$(PY) scripts/run_pipeline.py --quick
 
 ablations:        ## what an easier benchmark would have scored (-> reports/BENCHMARK_ABLATIONS.md)

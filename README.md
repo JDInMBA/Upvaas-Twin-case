@@ -9,6 +9,24 @@
 
 Submission for the Happiest Health *Reimagining and Reforming Healthcare in India Summit 2026*, Digital Twin Challenge.
 
+```bash
+bash run.sh --quick     # venv, build, dashboard at http://localhost:8000  (~4 min)
+```
+
+### At a glance
+
+| | |
+|---|---|
+| **Condition & event** | Type 2 diabetes. Hypoglycaemia (<70 mg/dL) and hyperglycaemia (>250 mg/dL), predicted **2 hours ahead** |
+| **The India-specific idea** | Religious fasts are **on the calendar**, so sulfonylurea hypoglycaemia is schedulable — and rehearsable before the patient lives it |
+| **Two data streams fused** | Synthetic India-localised EHR (labs, meds, CYP2C9/TCF7L2, eGFR) + simulated CGM / fingersticks / HR / HRV / steps / sleep / meal & pill logs |
+| **What makes it a *twin*** | Mechanistic ODE personalised by a particle filter, then replayed **counterfactually**: "what if she moves her glimepiride to the fast-breaking meal?" |
+| **Headline result** | Without a CGM, the twin lifts 2-h hypoglycaemia AUPRC **0.08 → 0.13** and cuts false alarms **5.4 → 2.7** per patient-day. Of 20 patients flagged each morning, ~5 have a real event (0.9% base rate) |
+| **How hard the test is** | The virtual body runs a **different model** from the twin, eating is deliberately messy, and a 4-feature timetable baseline is published beside every headline |
+| **Honesty** | Patient-clustered CIs on every number · null results in §3, not a footnote · leakage regression tests · FHIR bundles validated against the real R4 schema |
+
+Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json); full tables in **[§3 Results](#3-results)**.
+
 ---
 
 ## 1. Submission details
@@ -93,7 +111,7 @@ Accuracy figures mean nothing without this, so it comes first.
 
 | Sensor tier | AUROC | AUPRC <sub>[95% CI]</sub> | AUPRC without the twin | precision@20 | event recall | false alarms / patient-day |
 |---|---|---|---|---|---|---|
-| A · CGM + watch | 0.942 | 0.603 <sub>[0.58–0.63]</sub> | 0.567 | 0.99 | 98% | 4.69 |
+| A · CGM + watch | 0.942 | 0.603 <sub>[0.57–0.63]</sub> | 0.567 | 0.99 | 98% | 4.69 |
 | **B · 2 fingersticks/day + watch** | 0.935 | **0.573** <sub>[0.54–0.60]</sub> | 0.483 | 0.97 | 95% | 4.95 |
 | C · EHR + phone only | 0.913 | 0.448 <sub>[0.41–0.48]</sub> | 0.397 | 0.85 | 90% | 6.20 |
 
@@ -148,7 +166,7 @@ Across sulfonylurea-treated fasters, moving the dose to the fast-breaking meal l
 
 The normalised-innovation monitor detects illness days with AUROC only **0.53** (33% sensitivity at a 29% false-flag rate). We ship it as the hook a CDSCO Algorithm Change Protocol would attach to, and report it as **not yet good enough to deploy**.
 
-*Full pipeline runtime: 101 min on a laptop CPU (`--quick` builds 60 patients in about 5).*
+*Full pipeline runtime: 15 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
 <!-- RESULTS:END -->
 
 ![degradation](reports/figures/degradation.png)
@@ -262,8 +280,8 @@ bash run.sh              # venv, deps, full build, then opens the dashboard
 
 Then open **http://localhost:8000**.
 
-> **The full build takes roughly an hour and a half on a laptop CPU** (200 patients × 28 days × 3 sensor tiers × 5-fold CV
-> × 3 ablations). Use `--quick` if you just want to see the dashboard. `run.sh` rebuilds only when the artefacts
+> **The full build takes about 15 minutes on a laptop CPU** (200 patients × 28 days × 3 sensor tiers × 5-fold CV
+> × 3 ablation arms). Use `--quick` (60 patients, ~4 min) if you just want to see the dashboard. `run.sh` rebuilds only when the artefacts
 > the dashboard needs are actually missing.
 
 ### Step by step (any OS, including Windows)

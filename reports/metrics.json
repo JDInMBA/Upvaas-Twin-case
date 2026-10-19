@@ -39,17 +39,17 @@
    "false_alarms_per_patient_day": 1.0033624115309554,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9413225892253114,
-    0.9745982926212273
-   ],
-   "auprc_ci95": [
-    0.10406842103172567,
-    0.3425928762578517
-   ],
    "precision_at_10": 0.42592592592592593,
    "precision_at_20": 0.35555555555555557,
    "precision_at_40": 0.3074074074074074,
+   "auroc_ci95": [
+    0.9423702513713349,
+    0.9732719782094762
+   ],
+   "auprc_ci95": [
+    0.10463720261834104,
+    0.34401515645782843
+   ],
    "matched_fa_0.5": {
     "event_onsets": 624,
     "event_recall": 0.5160256410256411,
@@ -78,26 +78,9 @@
    "false_alarms_per_patient_day": 1.3810811446307225,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9080735646039834,
-    0.9681957915258493
-   ],
-   "auprc_ci95": [
-    0.07940347762243609,
-    0.27788670597398135
-   ],
    "precision_at_10": 0.2296296296296296,
    "precision_at_20": 0.26481481481481484,
-   "precision_at_40": 0.2583333333333333,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.4583333333333333,
-    "median_lead_min": 85.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.4994239224999412,
-    "threshold_at_fa": 0.16828450285606575,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.2583333333333333
   },
   "A_full/no_calendar/hypo": {
    "n": 255174,
@@ -117,26 +100,9 @@
    "false_alarms_per_patient_day": 1.0599826001081616,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9452994010597021,
-    0.9763298670972786
-   ],
-   "auprc_ci95": [
-    0.10246470161490508,
-    0.34757876603045235
-   ],
    "precision_at_10": 0.2962962962962963,
    "precision_at_20": 0.3240740740740741,
-   "precision_at_40": 0.34629629629629627,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.5064102564102564,
-    "median_lead_min": 95.0,
-    "median_lead_last_min": 15.0,
-    "false_alarms_per_patient_day": 0.4503280114745233,
-    "threshold_at_fa": 0.17670682730923695,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.34629629629629627
   },
   "A_full/rule_cgm_trend/hypo": {
    "n": 255174,
@@ -178,8 +144,8 @@
     "hour_cos"
    ],
    "auprc_ci95": [
-    0.012320123729696491,
-    0.08974862142396417
+    0.013036767504083726,
+    0.0889521316030451
    ]
   },
   "A_full/full/hyper": {
@@ -200,17 +166,17 @@
    "false_alarms_per_patient_day": 4.6949367440788246,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9380634369894079,
-    0.9460696444742468
-   ],
-   "auprc_ci95": [
-    0.5753642711667301,
-    0.631516349364718
-   ],
    "precision_at_10": 0.9888888888888888,
    "precision_at_20": 0.9870370370370372,
    "precision_at_40": 0.9740740740740742,
+   "auroc_ci95": [
+    0.9380819586801595,
+    0.9458186371328716
+   ],
+   "auprc_ci95": [
+    0.574788435399786,
+    0.6312035029799138
+   ],
    "matched_fa_0.5": {
     "event_onsets": 3901,
     "event_recall": 0.7403229941040759,
@@ -239,26 +205,9 @@
    "false_alarms_per_patient_day": 4.998088212498559,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.933458390339288,
-    0.941633864917528
-   ],
-   "auprc_ci95": [
-    0.5387976104806926,
-    0.5945752686600838
-   ],
    "precision_at_10": 0.9851851851851853,
    "precision_at_20": 0.9796296296296297,
-   "precision_at_40": 0.9527777777777778,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.7018713150474237,
-    "median_lead_min": 45.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.4735191596084214,
-    "threshold_at_fa": 0.46559633027522934,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.9527777777777778
   },
   "A_full/no_calendar/hyper": {
    "n": 251597,
@@ -278,26 +227,9 @@
    "false_alarms_per_patient_day": 6.0159063899808025,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9154116660220256,
-    0.9242584862729505
-   ],
-   "auprc_ci95": [
-    0.5404098364562286,
-    0.5895266131381581
-   ],
    "precision_at_10": 0.9777777777777777,
    "precision_at_20": 0.9814814814814815,
-   "precision_at_40": 0.9527777777777777,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.7449371955908741,
-    "median_lead_min": 50.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.4683680648020445,
-    "threshold_at_fa": 0.4637893483321843,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.9527777777777777
   },
   "A_full/rule_cgm_trend/hyper": {
    "n": 251597,
@@ -339,8 +271,8 @@
     "hour_cos"
    ],
    "auprc_ci95": [
-    0.26858408801861366,
-    0.34485137961199297
+    0.26965076193383514,
+    0.3456891017455828
    ]
   },
   "B_frugal/full/hypo": {
@@ -361,17 +293,17 @@
    "false_alarms_per_patient_day": 2.6852265512944107,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.8648771358756654,
-    0.945233517063002
-   ],
-   "auprc_ci95": [
-    0.04992687688467943,
-    0.23237677074674842
-   ],
    "precision_at_10": 0.32962962962962955,
    "precision_at_20": 0.262962962962963,
    "precision_at_40": 0.2157407407407407,
+   "auroc_ci95": [
+    0.8648729969494539,
+    0.9449430023421741
+   ],
+   "auprc_ci95": [
+    0.04843323526281011,
+    0.2294955128608083
+   ],
    "matched_fa_0.5": {
     "event_onsets": 624,
     "event_recall": 0.27403846153846156,
@@ -400,26 +332,9 @@
    "false_alarms_per_patient_day": 5.392085400550213,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.7320937592218759,
-    0.8844147199384388
-   ],
-   "auprc_ci95": [
-    0.019190752992780936,
-    0.1601662854134732
-   ],
    "precision_at_10": 0.36666666666666664,
    "precision_at_20": 0.34629629629629627,
-   "precision_at_40": 0.22685185185185186,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.21474358974358973,
-    "median_lead_min": 100.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.49660231841802066,
-    "threshold_at_fa": 0.1393939393939394,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.22685185185185186
   },
   "B_frugal/no_calendar/hypo": {
    "n": 255174,
@@ -439,26 +354,9 @@
    "false_alarms_per_patient_day": 3.5723388746502387,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.8483388667170298,
-    0.9412837547434298
-   ],
-   "auprc_ci95": [
-    0.05376872973932853,
-    0.24630772880278734
-   ],
    "precision_at_10": 0.39259259259259266,
    "precision_at_20": 0.38333333333333336,
-   "precision_at_40": 0.3,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.3060897435897436,
-    "median_lead_min": 95.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.47384137882386135,
-    "threshold_at_fa": 0.17809913714229092,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.3
   },
   "B_frugal/full/hyper": {
    "n": 251597,
@@ -478,17 +376,17 @@
    "false_alarms_per_patient_day": 4.94543257670004,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9305324740652323,
-    0.9395394461476826
-   ],
-   "auprc_ci95": [
-    0.5439520545139203,
-    0.6006720668622095
-   ],
    "precision_at_10": 0.9962962962962962,
    "precision_at_20": 0.9685185185185184,
    "precision_at_40": 0.936111111111111,
+   "auroc_ci95": [
+    0.930393519395514,
+    0.9392667641972882
+   ],
+   "auprc_ci95": [
+    0.5439705188889683,
+    0.6002177256100676
+   ],
    "matched_fa_0.5": {
     "event_onsets": 3901,
     "event_recall": 0.682132786465009,
@@ -517,26 +415,9 @@
    "false_alarms_per_patient_day": 5.92662074667027,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9180771441953021,
-    0.9282251240478183
-   ],
-   "auprc_ci95": [
-    0.4492069735485523,
-    0.5139467639057888
-   ],
    "precision_at_10": 0.9037037037037037,
    "precision_at_20": 0.8833333333333334,
-   "precision_at_40": 0.8555555555555557,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.533196616252243,
-    "median_lead_min": 55.0,
-    "median_lead_last_min": 25.0,
-    "false_alarms_per_patient_day": 0.45596728100891504,
-    "threshold_at_fa": 0.47824073026050484,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.8555555555555557
   },
   "B_frugal/no_calendar/hyper": {
    "n": 251597,
@@ -556,26 +437,9 @@
    "false_alarms_per_patient_day": 5.625567872430911,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9172507360814315,
-    0.9266954018297164
-   ],
-   "auprc_ci95": [
-    0.5212133028423652,
-    0.576455338414373
-   ],
    "precision_at_10": 0.9851851851851853,
    "precision_at_20": 0.9777777777777777,
-   "precision_at_40": 0.9388888888888888,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.6657267367341707,
-    "median_lead_min": 55.0,
-    "median_lead_last_min": 20.0,
-    "false_alarms_per_patient_day": 0.4813411924625492,
-    "threshold_at_fa": 0.4571428571428571,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.9388888888888888
   },
   "C_minimal/full/hypo": {
    "n": 255174,
@@ -595,17 +459,17 @@
    "false_alarms_per_patient_day": 6.87248700886454,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.6968488743676411,
-    0.8631247520150996
-   ],
-   "auprc_ci95": [
-    0.018407951840160666,
-    0.14133015736255533
-   ],
    "precision_at_10": 0.3888888888888889,
    "precision_at_20": 0.2611111111111111,
    "precision_at_40": 0.14722222222222223,
+   "auroc_ci95": [
+    0.7118906755652776,
+    0.8691496048919282
+   ],
+   "auprc_ci95": [
+    0.018490144625716645,
+    0.13799427144388393
+   ],
    "matched_fa_0.5": {
     "event_onsets": 624,
     "event_recall": 0.22596153846153846,
@@ -634,26 +498,9 @@
    "false_alarms_per_patient_day": 7.182675350937008,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.7004413046101782,
-    0.8447073391860969
-   ],
-   "auprc_ci95": [
-    0.014151989429908682,
-    0.06428734223872058
-   ],
    "precision_at_10": 0.014814814814814815,
    "precision_at_20": 0.007407407407407408,
-   "precision_at_40": 0.003703703703703704,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.0,
-    "median_lead_min": null,
-    "median_lead_last_min": null,
-    "false_alarms_per_patient_day": 0.04853159020903384,
-    "threshold_at_fa": 0.14912280701754385,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.003703703703703704
   },
   "C_minimal/no_calendar/hypo": {
    "n": 255174,
@@ -673,26 +520,9 @@
    "false_alarms_per_patient_day": 9.692021914458369,
    "patients_with_events": 40,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.6750129753751879,
-    0.8599520661488294
-   ],
-   "auprc_ci95": [
-    0.016363293401439313,
-    0.13988531320381278
-   ],
    "precision_at_10": 0.39629629629629626,
    "precision_at_20": 0.24999999999999997,
-   "precision_at_40": 0.18703703703703706,
-   "matched_fa_0.5": {
-    "event_onsets": 624,
-    "event_recall": 0.15544871794871795,
-    "median_lead_min": 95.0,
-    "median_lead_last_min": 25.0,
-    "false_alarms_per_patient_day": 0.17851348491617486,
-    "threshold_at_fa": 0.1411764705882353,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.18703703703703706
   },
   "C_minimal/full/hyper": {
    "n": 251597,
@@ -712,17 +542,17 @@
    "false_alarms_per_patient_day": 6.196576270782242,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9053823669540385,
-    0.9191249873126083
-   ],
-   "auprc_ci95": [
-    0.4059564968408785,
-    0.4841276971389727
-   ],
    "precision_at_10": 0.8925925925925925,
    "precision_at_20": 0.8462962962962962,
    "precision_at_40": 0.7879629629629629,
+   "auroc_ci95": [
+    0.9052917209181582,
+    0.9183581755495233
+   ],
+   "auprc_ci95": [
+    0.40726043916657134,
+    0.4834387663164413
+   ],
    "matched_fa_0.5": {
     "event_onsets": 3901,
     "event_recall": 0.3640092284029736,
@@ -751,26 +581,9 @@
    "false_alarms_per_patient_day": 7.520216854731972,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.8978934907342949,
-    0.9113414648782528
-   ],
-   "auprc_ci95": [
-    0.36033342992185946,
-    0.4303614330622362
-   ],
    "precision_at_10": 0.7333333333333334,
    "precision_at_20": 0.6981481481481481,
-   "precision_at_40": 0.6768518518518518,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.31171494488592666,
-    "median_lead_min": 95.0,
-    "median_lead_last_min": 30.0,
-    "false_alarms_per_patient_day": 0.4769532228126726,
-    "threshold_at_fa": 0.4074074074074074,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.6768518518518518
   },
   "C_minimal/no_calendar/hyper": {
    "n": 251597,
@@ -790,26 +603,9 @@
    "false_alarms_per_patient_day": 6.761098105303322,
    "patients_with_events": 196,
    "n_patients": 200,
-   "auroc_ci95": [
-    0.9034321989981065,
-    0.9163468954461073
-   ],
-   "auprc_ci95": [
-    0.4008956259614495,
-    0.4784142462386728
-   ],
    "precision_at_10": 0.8444444444444443,
    "precision_at_20": 0.8277777777777777,
-   "precision_at_40": 0.7694444444444444,
-   "matched_fa_0.5": {
-    "event_onsets": 3901,
-    "event_recall": 0.3773391438092797,
-    "median_lead_min": 90.0,
-    "median_lead_last_min": 25.0,
-    "false_alarms_per_patient_day": 0.49812994590555526,
-    "threshold_at_fa": 0.4444444444444444,
-    "fa_budget_per_patient_day": 0.5
-   }
+   "precision_at_40": 0.7694444444444444
   }
  },
  "degradation": {
@@ -2783,5 +2579,5 @@
   "mean_p_hypo_usual_su": 0.2764615384615385,
   "mean_p_hypo_dose_moved_su": 0.10335897435897436
  },
- "runtime_sec": 6060.0
+ "runtime_sec": 897.2
 }

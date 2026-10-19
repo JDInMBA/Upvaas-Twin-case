@@ -27,8 +27,8 @@ done
 if [ "$ARG" = "--quick" ]; then
   python scripts/run_pipeline.py --quick
 elif [ "$need_build" = "1" ] || [ "$ARG" = "--rebuild" ]; then
-  echo "Building the cohort, twins and models. This takes roughly 25 minutes on a laptop CPU."
-  echo "In a hurry? Ctrl-C and run:  bash run.sh --quick   (60 patients, about 5 minutes)"
+  echo "Building the cohort, twins and models. This takes about 15 minutes on a laptop CPU."
+  echo "In a hurry? Ctrl-C and run:  bash run.sh --quick   (60 patients, about 4 minutes)"
   python scripts/run_pipeline.py
 fi
 
