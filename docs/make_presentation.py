@@ -48,11 +48,12 @@ def _foot(ax, n, note="UPVAAS-Twin  ·  synthetic data only  ·  not a medical d
     ax.text(W - 0.7, 0.35, str(n), fontsize=9, color=MUTED, ha="right")
 
 
-def _card(ax, x, y, w, h, fill, title, lines, tcol=INK, fs=11.5):
+def _card(ax, x, y, w, h, fill, title, lines, tcol=INK, fs=10.5):
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.13",
                                 fc=fill, ec="#dcdad2", lw=0.9))
-    ax.text(x + 0.3, y + h - 0.45, title, fontsize=13.5, color=tcol, weight="bold", va="top")
-    ax.text(x + 0.3, y + h - 1.05, "\n".join(lines), fontsize=fs, color=INK2, va="top", linespacing=1.6)
+    ax.text(x + 0.3, y + h - 0.42, title, fontsize=13, color=tcol, weight="bold", va="top")
+    ax.text(x + 0.3, y + h - 0.92, "\n".join([l for l in lines if l]), fontsize=fs, color=INK2,
+            va="top", linespacing=1.4)
 
 
 def _stat(ax, x, y, w, big, label, col=BLUE, sub=None):
@@ -93,11 +94,11 @@ def build(m: dict, out: Path):
     f, ax = _fig()
     _title(ax, "A danger that is already on the calendar",
            "Scheduled, common, unmonitored - and therefore predictable")
-    _card(ax, 0.7, 3.5, 3.8, 2.1, BAND["grey"], "The scale",
+    _card(ax, 0.7, 3.4, 3.8, 2.0, BAND["grey"], "The scale",
           ["101 million adults with diabetes", "136 million with prediabetes", "(ICMR-INDIAB, Lancet D&E 2023)"])
-    _card(ax, 4.75, 3.5, 3.8, 2.1, BAND["orange"], "The drug",
+    _card(ax, 4.75, 3.4, 3.8, 2.0, BAND["orange"], "The drug",
           ["57% take a sulfonylurea,", "which keeps releasing insulin", "even when no food arrives"])
-    _card(ax, 8.8, 3.5, 3.8, 2.1, BAND["blue"], "The behaviour",
+    _card(ax, 8.8, 3.4, 3.8, 2.0, BAND["blue"], "The behaviour",
           ["49% fast for religion", "4% check glucose while fasting", "1.35% ask a doctor first"])
     ax.text(0.7, 2.9, "Navratri · Ekadashi · Karva Chauth (nirjala) · Ramadan roza", fontsize=14, color=INK,
             weight="bold", va="top")
@@ -111,20 +112,20 @@ def build(m: dict, out: Path):
     f, ax = _fig()
     _title(ax, "Static data sets the prior. Live data updates the posterior.",
            "The calendar tells the twin what is coming - days in advance")
-    _card(ax, 0.7, 3.9, 3.8, 2.4, BAND["grey"], "1 · EHR prior",
+    _card(ax, 0.7, 3.25, 3.8, 2.15, BAND["grey"], "1 · EHR prior",
           ["labs, meds, eGFR,", "CYP2C9 and TCF7L2", "->  personal physiology", "     before any device data"])
-    _card(ax, 4.75, 3.9, 3.8, 2.4, BAND["orange"], "2 · Mechanistic twin",
+    _card(ax, 4.75, 3.25, 3.8, 2.15, BAND["orange"], "2 · Mechanistic twin",
           ["Bergman + gut + sulfonylurea", "PK/PD + fasting clock", "+ blunted counter-regulation",
            "->  explains WHY, not just what"])
-    _card(ax, 8.8, 3.9, 3.8, 2.4, BAND["blue"], "3 · Particle filter",
+    _card(ax, 8.8, 3.25, 3.8, 2.15, BAND["blue"], "3 · Particle filter",
           ["64 candidate physiologies", "re-weighted by every reading", "->  a twin that follows the",
            "     patient, not a classifier"])
-    _card(ax, 0.7, 1.05, 5.9, 2.5, BAND["green"], "Vrat Rehearsal - the part that makes it a twin",
+    _card(ax, 0.7, 0.95, 5.9, 2.15, BAND["green"], "Vrat Rehearsal - the part that makes it a twin",
           ["\"If she fasts tomorrow and takes her usual glimepiride, what happens?\"",
            "36-hour counterfactual replay on the posterior particles:",
            "usual dose  ·  halved  ·  skipped  ·  moved to the fast-breaking meal",
            "low-GI swap  ·  a walk after iftar  ·  garba at night"])
-    _card(ax, 6.85, 1.05, 5.75, 2.5, BAND["grey"], "Into the health system",
+    _card(ax, 6.85, 0.95, 5.75, 2.15, BAND["grey"], "Into the health system",
           ["ASHA 'Vrat Saathi' recall list, ranked, in the patient's language",
            "eSanjeevani teleconsult before the fast, not an ambulance after",
            "FHIR R4 RiskAssessment + ABDM-shaped consent artefact",
@@ -170,11 +171,11 @@ def build(m: dict, out: Path):
     _title(ax, "Graceful degradation: the same twin, three levels of device",
            "We publish the whole ladder, so a low-resource clinic knows exactly what it is getting")
     rows = [("A · CGM + watch", A, BLUE), ("B · 2 fingersticks + watch", B, AQUA), ("C · EHR + phone only", C, ORANGE)]
-    ax.text(0.9, 5.55, "sensor tier", fontsize=11, color=MUTED)
+    ax.text(0.9, 5.25, "sensor tier", fontsize=11, color=MUTED)
     for j, h in enumerate(["hypo AUPRC (95% CI)", "precision@20", "event recall", "false alarms / patient-day"]):
-        ax.text(4.6 + j * 2.1, 5.55, h, fontsize=10.5, color=MUTED, ha="center")
+        ax.text(4.6 + j * 2.1, 5.25, h, fontsize=10.5, color=MUTED, ha="center")
     for i, (lab, r, col) in enumerate(rows):
-        y = 4.75 - i * 0.95
+        y = 4.7 - i * 0.85
         ax.add_patch(FancyBboxPatch((0.75, y - 0.3), W - 1.5, 0.78,
                                     boxstyle="round,pad=0.01,rounding_size=0.08",
                                     fc=BAND["grey"] if i % 2 == 0 else PAPER, ec="none"))
@@ -186,10 +187,13 @@ def build(m: dict, out: Path):
                  f"{r.get('false_alarms_per_patient_day', 0):.2f}"]
         for j, c in enumerate(cells):
             ax.text(4.6 + j * 2.1, y, c, fontsize=12, color=INK, ha="center", va="center")
-    _card(ax, 0.7, 0.95, W - 1.4, 1.85, BAND["blue"], "Read this honestly",
-          ["The twin's value is NOT uniform. It is largest at tier B, where data is sparse enough that physics has",
-           "something to add and dense enough to personalise - which is the tier most of India will actually live on.",
-           "At tier A a dense CGM already carries most of the 2-hour signal. We report that null result on the next slide."])
+    _card(ax, 0.7, 0.85, W - 1.4, 1.8, BAND["blue"], "Read this honestly", [
+        "The twin helps at every tier, but NOT equally, and the gain grows as the data gets thinner:",
+        f"   tier A {A.get('auprc', 0) / max(g('A_full/no_twin/hypo').get('auprc', 1e-9), 1e-9):.1f}x   ·   "
+        f"tier B {B.get('auprc', 0) / max(Bn.get('auprc', 1e-9), 1e-9):.1f}x   ·   "
+        f"tier C {C.get('auprc', 0) / max(g('C_minimal/no_twin/hypo').get('auprc', 1e-9), 1e-9):.1f}x",
+        "Tier B is the one that matters for India: sparse enough that physics has something to add, dense",
+        "enough to personalise - and it needs no CGM. False alarms still rise sharply as sensors are removed."])
     _foot(ax, 5)
     pages.append(f)
 
@@ -197,33 +201,35 @@ def build(m: dict, out: Path):
     f, ax = _fig()
     _title(ax, "Where it does not work - and how hard we made the test",
            "Reported because a result you cannot break is a result you cannot trust")
-    _card(ax, 0.7, 4.15, 5.9, 2.2, BAND["orange"], "Null results we are not hiding",
-          [f"Tier A: the twin changes hypo AUPRC {g('A_full/no_twin/hypo').get('auprc', 0):.2f} → "
-           f"{A.get('auprc', 0):.2f}. A dense CGM",
-           "   already carries the short-horizon signal.",
-           f"The calendar as ML features: {g('A_full/no_calendar/hypo').get('auprc', 0):.2f} without vs "
-           f"{A.get('auprc', 0):.2f} with.",
-           "   Its value is in Rehearsal days ahead, not in the feature vector.",
-           "The NIS drift monitor does not yet work well enough to deploy."])
-    _card(ax, 6.85, 4.15, 5.75, 2.2, BAND["grey"], "We made the benchmark harder on purpose",
-          ["The virtual body runs a DIFFERENT model from the twin:",
-           "   3-compartment gut · interstitial insulin delay · circadian SI",
-           "   · renal excretion · incretin. The twin has none of these terms.",
-           f"Meal plan vs what was actually eaten: r = {bd.get('plan_vs_logged_carb_corr_2h', 0):.2f}",
-           f"   ({bd.get('real_intake_that_was_unplanned', 0):.0%} of intake unplanned) - a prior, not an oracle."])
+    cov250 = m["conformal"]["horizons"][-1]["mondrian_conformal"].get("coverage_outcome_gt250")
+    _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "Null results we are not hiding", [
+        f"The festival calendar as ML features: {g('A_full/no_calendar/hypo').get('auprc', 0):.2f} without",
+        f"   vs {A.get('auprc', 0):.2f} with - no real difference. Its value is the",
+        "   Rehearsal, days before those features exist.",
+        "The drift monitor does not work (AUROC "
+        f"{(m['drift'].get('auroc_relative_nis_for_illness') or 0):.2f}).",
+        f"Forecast bands cover {cov250:.0%} above 250 mg/dL, not 90%." if cov250 else ""],
+        fs=10.5)
+    _card(ax, 6.85, 3.3, 5.75, 2.1, BAND["grey"], "We made the benchmark harder on purpose", [
+        "The virtual body runs a DIFFERENT model from the twin:",
+        "   3-compartment gut, interstitial insulin delay,",
+        "   circadian SI, renal excretion, incretin.",
+        f"Meal plan vs what was eaten: r = {bd.get('plan_vs_logged_carb_corr_2h', 0):.2f}, with",
+        f"   {bd.get('real_intake_that_was_unplanned', 0):.0%} of intake unplanned - a prior, not an oracle."],
+        fs=10.5)
     tv = m["models"].get("A_full/trivial_calendar_baseline/hyper", {})
-    _card(ax, 0.7, 1.9, 5.9, 1.9, BAND["green"], "The baseline that keeps us honest",
-          ["A 4-feature model - planned carbs, HbA1c, time of day - with no glucose,",
-           "no wearable and no twin, reaches hyperglycaemia AUPRC "
-           f"{tv.get('auprc', 0):.2f}.",
-           f"The full tier-A model reaches {Ah.get('auprc', 0):.2f}. We report both, so the",
-           "reader can see how much is physiology and how much is timetable."])
-    _card(ax, 6.85, 1.9, 5.75, 1.9, BAND["grey"], "Limits we state first",
-          ["Synthetic data only: these are upper bounds, not clinical evidence.",
-           f"Only {A.get('patients_with_events', 0)} of {A.get('n_patients', 0)} patients ever had a "
-           "hypoglycaemic event -",
-           "   the confidence intervals are wide and we print them.",
-           "Next step: external validation on ShanghaiT2DM / CGMacros (adapter built)."])
+    _card(ax, 0.7, 0.95, 5.9, 2.2, BAND["green"], "The baseline that keeps us honest", [
+        "Four features - planned carbs, HbA1c, time of day.",
+        "No glucose. No wearable. No twin.",
+        f"Hyperglycaemia AUPRC {tv.get('auprc', 0):.2f}, against {Ah.get('auprc', 0):.2f} for the",
+        "   full model. We publish it so the reader can see",
+        "   how much is physiology and how much is timetable."], fs=10.5)
+    _card(ax, 6.85, 0.95, 5.75, 2.2, BAND["grey"], "Limits we state first", [
+        "Synthetic data: upper bounds, not clinical evidence.",
+        f"Only {A.get('patients_with_events', 0)} of {A.get('n_patients', 0)} patients ever had a hypo event,",
+        "   so the confidence intervals are wide - and printed.",
+        "Karva Chauth, our flagship case, is the smallest cell.",
+        "Next: external validation on ShanghaiT2DM / CGMacros."], fs=10.5)
     _foot(ax, 6)
     pages.append(f)
 
@@ -233,12 +239,12 @@ def build(m: dict, out: Path):
            "A 90% band that is 90% on average can be 50% exactly where you are looking")
     c = m["conformal"]["horizons"][-1]
     sp, mo = c["split_conformal"], c["mondrian_conformal"]
-    ax.text(0.9, 5.5, "coverage of the 2-hour forecast band", fontsize=11, color=MUTED)
+    ax.text(0.9, 5.25, "coverage of the 2-hour forecast band", fontsize=11, color=MUTED)
     for j, h in enumerate(["overall", "when outcome < 70", "when outcome > 250", "mean band width"]):
-        ax.text(4.9 + j * 2.0, 5.5, h, fontsize=10.5, color=MUTED, ha="center")
+        ax.text(4.9 + j * 2.0, 5.25, h, fontsize=10.5, color=MUTED, ha="center")
     for i, (lab, r, col) in enumerate([("Split conformal (one margin)", sp, MUTED),
                                        ("Mondrian (margin per glucose band)", mo, BLUE)]):
-        y = 4.7 - i * 0.9
+        y = 4.55 - i * 0.88
         ax.add_patch(FancyBboxPatch((0.75, y - 0.3), W - 1.5, 0.75,
                                     boxstyle="round,pad=0.01,rounding_size=0.08",
                                     fc=BAND["grey"] if i == 0 else BAND["blue"], ec="none"))
@@ -249,7 +255,7 @@ def build(m: dict, out: Path):
                     color=CRIT if (v is not None and v < 0.75) else INK, ha="center", va="center")
         ax.text(4.9 + 3 * 2.0, y, f"{r.get('mean_band_width_mgdl', 0):.0f} mg/dL", fontsize=12,
                 color=INK, ha="center", va="center")
-    _card(ax, 0.7, 1.1, W - 1.4, 2.4, BAND["green"], "Why this slide exists",
+    _card(ax, 0.7, 1.05, W - 1.4, 2.2, BAND["green"], "Why this slide exists",
           ["Split conformal gives a MARGINAL guarantee: 90% averaged over every patient and every minute. Because",
            "most calibration points are euglycaemic, the band is far too narrow during exactly the post-meal excursions",
            "a clinician is watching. Mondrian conformal calibrates a separate margin per predicted-glucose stratum and",
@@ -265,18 +271,18 @@ def build(m: dict, out: Path):
     fr = m.get("fairness", {}).get("A_full/hypo", {})
     trad = {k.replace("tradition_", ""): v for k, v in fr.items() if k.startswith("tradition_")}
     lines = [f"{k}: AUROC {v.get('auroc', 0):.3f}" for k, v in sorted(trad.items())] or ["(run the pipeline)"]
-    _card(ax, 0.7, 3.8, 5.9, 2.5, BAND["blue"], "Audited on the axis that matters here",
+    _card(ax, 0.7, 3.25, 5.9, 2.15, BAND["blue"], "Audited on the axis that matters here",
           ["This project is built on religious fasting, so fasting tradition is the",
            "first axis we audit - not an afterthought:"] + lines +
           ["Also audited: sex, urban/rural, age, eGFR, region."])
-    _card(ax, 6.85, 3.8, 5.75, 2.5, BAND["grey"], "Governance by design",
+    _card(ax, 6.85, 3.25, 5.75, 2.15, BAND["grey"], "Governance by design",
           ["DPDP 2023 - synthetic data only; consent ID on every record,",
            "   purpose limitation (CAREMGT), deletion on consent expiry.",
            "ABDM - FHIR R4 bundles, consent artefact via HIE-CM.",
            "CDSCO draft (Oct 2025) - informs, does not drive, a registered",
            "   practitioner -> likely Class B. Human always in the loop.",
            "ICMR 2023 - model card, subgroup audit, right to refuse AI."])
-    _card(ax, 0.7, 1.0, W - 1.4, 2.5, BAND["green"], "Deployment path",
+    _card(ax, 0.7, 0.95, W - 1.4, 2.2, BAND["green"], "Deployment path",
           ["WHERE   NP-NCD screening at Ayushman Arogya Mandirs (~25 million on diabetes treatment under '75 by 25'),",
            "              private diabetology clinics, CGM programmes.",
            "HOW      ASHA app receives the ranked recall list two weeks before Navratri / Ramadan -> home visit or phone call",
@@ -289,14 +295,14 @@ def build(m: dict, out: Path):
     # ---------------------------------------------------------------- 9 close
     f, ax = _fig()
     _title(ax, "What we are claiming - and what we are not", "")
-    _card(ax, 0.7, 3.9, 5.9, 2.5, BAND["green"], "We are claiming",
+    _card(ax, 0.7, 3.25, 5.9, 2.15, BAND["green"], "We are claiming",
           ["A twin that treats India's festival calendar as a planned",
            "   perturbation, not as noise.",
            "A counterfactual rehearsal a doctor can run BEFORE the fast.",
            "A measured ladder from CGM down to a phone, so the people",
            "   least likely to own a device are not silently excluded.",
            "Uncertainty, fairness and null results reported, not implied."])
-    _card(ax, 6.85, 3.9, 5.75, 2.5, BAND["orange"], "We are not claiming",
+    _card(ax, 6.85, 3.25, 5.75, 2.15, BAND["orange"], "We are not claiming",
           ["Clinical validity. The data are synthetic; nothing here has",
            "   been tested on a real patient.",
            "That the twin helps everywhere - at tier A it does not help",
