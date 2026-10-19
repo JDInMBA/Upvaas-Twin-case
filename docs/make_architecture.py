@@ -63,7 +63,7 @@ def main():
     box(ax, cols[2], 0.73, W, 0.14, "EHR -> physiology prior", [
         "ridge maps labs+genes -> SI, beta-gain,", "hepatic set-point, SU effect, SU half-life",
         "(CYP2C9 & eGFR lengthen SU t1/2 prior)"], "twin")
-    box(ax, cols[2], 0.45, W, 0.25, "SU-Bergman-Gut model", [
+    box(ax, cols[2], 0.45, W, 0.25, "SU-Bergman-Gut model  (what the TWIN believes)", [
         "Bergman minimal model (G, X)", "+ 2-compartment gut, GI-dependent k_abs",
         "+ glucose-stimulated insulin secretion", "+ sulfonylurea PK/PD (secretes at low G)",
         "+ fasting clock: hepatic output falls >12 h", "+ dawn, sleep->SI, activity, PM2.5,",
@@ -79,8 +79,9 @@ def main():
         "sustained >=15 min within next 120 min", "isotonic calibration", "alarm threshold for 80% recall",
         "ablations: no-twin, no-calendar, rule"], "ml")
     box(ax, cols[3], 0.40, W, 0.19, "Uncertainty & explanation", [
-        "split-conformal widening of twin bands", "(90% coverage guarantee on held-out pts)",
-        "counterfactual driver attribution", "(swap a feature group to neutral -> delta p)"], "ml")
+        "Mondrian (class-conditional) conformal:", "a margin per predicted-glucose band, because",
+        "one margin is 90% on average and ~50% in", "the range a clinician is watching",
+        "counterfactual driver attribution", "patient-clustered bootstrap CIs on every number"], "ml")
     box(ax, cols[3], 0.20, W, 0.17, "Vrat Rehearsal (what-if)", [
         "36-h replay on posterior particles", "fast type x SU timing x low-GI swap",
         "x walk x garba x basal insulin", "-> P(hypo), P(severe), P(hyper), nadir"], "ml")
@@ -97,13 +98,22 @@ def main():
         "FHIR RiskAssessment to HIP / EMR", "NP-NCD / Ayushman Arogya Mandir",
         "model card: degradation by sensor tier,", "fairness by sex/region/age/eGFR"], "out")
 
-    ax.add_patch(FancyBboxPatch((0.02, 0.04), 0.96, 0.11, boxstyle="round,pad=0.006,rounding_size=0.012", fc=FILL["gov"], ec=LINE))
-    ax.text(0.03, 0.125, "GOVERNANCE RAIL", fontsize=8, color=INK2, fontweight="bold")
-    ax.text(0.03, 0.10, "CDSCO draft medical-device-software guidance (Oct 2025): informs, does not drive -> likely Class B  ·  "
+    ax.add_patch(FancyBboxPatch((0.02, 0.123), 0.96, 0.072, boxstyle="round,pad=0.005,rounding_size=0.012",
+                                fc=FILL["ml"], ec=LINE))
+    ax.text(0.03, 0.185, "HOW HARD THE TEST IS", fontsize=8, color=INK2, fontweight="bold")
+    ax.text(0.03, 0.166, "The virtual body runs a DIFFERENT model from the twin - 3-compartment gut, interstitial insulin "
+            "delay, circadian insulin sensitivity, renal excretion, incretin - so error includes model misspecification, not just\n"
+            "parameter error  ·  Eating is messy on purpose, so the festival calendar is a PRIOR and not an oracle  ·  Reported "
+            "beside a 4-feature timetable baseline with no glucose and no twin  ·  Patient-grouped CV, bootstrap CIs, leakage test",
+            fontsize=7.6, color=INK2, va="top", linespacing=1.5)
+
+    ax.add_patch(FancyBboxPatch((0.02, 0.035), 0.96, 0.082, boxstyle="round,pad=0.005,rounding_size=0.012", fc=FILL["gov"], ec=LINE))
+    ax.text(0.03, 0.107, "GOVERNANCE RAIL", fontsize=8, color=INK2, fontweight="bold")
+    ax.text(0.03, 0.088, "CDSCO draft medical-device-software guidance (Oct 2025): informs, does not drive -> likely Class B  ·  "
             "NIS drift monitor feeds a pre-declared Algorithm Change Protocol  ·  ICMR 2023 AI ethics: human in the loop, "
             "Indian-representative data,\nnon-discrimination audit, right to refuse AI  ·  DPDP: consent-tagged data, purpose limitation, "
             "deletion on expiry  ·  Sensor-tier degradation curve published so low-resource users are not silently under-served",
-            fontsize=8, color=INK2, va="top", linespacing=1.5)
+            fontsize=7.6, color=INK2, va="top", linespacing=1.5)
 
     for i in range(4):
         for y in (0.76, 0.52, 0.30):

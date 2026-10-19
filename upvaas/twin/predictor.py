@@ -137,13 +137,16 @@ def lead_time_at_fa(df: pd.DataFrame, p: np.ndarray, sus: np.ndarray, target: st
     return out
 
 
-def bootstrap_ci(y: np.ndarray, p: np.ndarray, patient: np.ndarray, metric, n_boot: int = 400,
+def bootstrap_ci(y: np.ndarray, p: np.ndarray, patient: np.ndarray, metric, n_boot: int = 250,
                  seed: int = 0, alpha: float = 0.05) -> list:
     """Patient-clustered bootstrap CI.
 
     Resampling rows would badly understate the interval: rows within a patient are not independent,
     and only a minority of patients ever experience an event. Resampling PATIENTS gives the honest
     width, which for rare events is wide.
+
+    250 resamples is enough for a 95% interval reported to two decimals; the cost is dominated by
+    re-ranking ~250k rows per resample, so this is deliberately not set higher.
     """
     y = np.asarray(y).astype(int)
     p = np.asarray(p, dtype=float)

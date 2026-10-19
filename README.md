@@ -208,9 +208,21 @@ rather than bolted on, and all four are reported in `reports/metrics.json`.
    precision, the calendar features do not help as features, and the drift monitor does not work well enough to
    deploy. All three are stated in §3.
 
-A leakage regression test (`tests/test_core.py::test_no_feature_reads_future_truth`) perturbs the future and
-asserts that **no** feature computed at the decision time changes, so an off-by-one window can never silently
-inflate these numbers.
+Two more things are checked rather than asserted:
+
+* **A leakage regression test.** `tests/test_core.py::test_no_feature_reads_future_truth` perturbs the future
+  and asserts that **no** feature computed at the decision time changes, so an off-by-one window can never
+  silently inflate these numbers. A companion test fails if anyone ever re-points the virtual body at the
+  twin's own equations.
+* **The cost of an easier benchmark is measured, not asserted.** `make ablations` re-runs the identical
+  pipeline with the body on the twin's equations and with a predictable meal schedule, and
+  `python scripts/compare_ablations.py` writes
+  [`reports/BENCHMARK_ABLATIONS.md`](reports/BENCHMARK_ABLATIONS.md) showing exactly what we could have
+  claimed instead.
+
+**FHIR R4 export is validated, not just named.** `make fhir` parses every bundle in `data/fhir/` plus a freshly
+generated one with the `fhir.resources` R4B schema; CI runs it on every push. Base-R4 validity is a necessary
+step towards ABDM conformance, not a substitute for the NRCeS India profiles, and the script says so.
 
 ---
 
@@ -250,7 +262,7 @@ bash run.sh              # venv, deps, full build, then opens the dashboard
 
 Then open **http://localhost:8000**.
 
-> **The full build takes roughly 25 minutes on a laptop CPU** (200 patients × 28 days × 3 sensor tiers × 5-fold CV
+> **The full build takes roughly an hour and a half on a laptop CPU** (200 patients × 28 days × 3 sensor tiers × 5-fold CV
 > × 3 ablations). Use `--quick` if you just want to see the dashboard. `run.sh` rebuilds only when the artefacts
 > the dashboard needs are actually missing.
 
@@ -277,15 +289,29 @@ metrics move in the 4th decimal through thread scheduling.
 ### The honesty ablations
 
 ```bash
-make ablations    # writes reports/metrics_matched_model.json and reports/metrics_easy_meals.json
+make ablations                       # four benchmark settings, each writing its own metrics file
+python scripts/compare_ablations.py  # -> reports/BENCHMARK_ABLATIONS.md
+make fhir                            # validate the FHIR R4 bundles against the real schema
 ```
 
 * `--matched-model` — integrate the body with the **twin's own** equations. Removes all misspecification and
   reproduces the optimistic setting most digital-twin papers report.
 * `--easy-meals` — tight meal timing and almost no unplanned eating, so the calendar becomes a near-oracle.
 
-Comparing the three runs shows how much of a digital twin's reported accuracy is real and how much is an artefact
-of a benchmark that was too kind.
+Nothing about the twin changes between those runs — only how hard the test is. The comparison is written up in
+[`reports/BENCHMARK_ABLATIONS.md`](reports/BENCHMARK_ABLATIONS.md).
+
+### Run the twin on a real CGM file
+
+```bash
+python scripts/replay_cgm_csv.py     # runs on the bundled example and explains how to read the result
+```
+
+The twin is **not retrained**: the EHR sets the prior and the particle filter personalises it from the glucose
+trace alone. On the bundled example, persistence wins at 30 min — glucose is strongly autocorrelated over that
+span and "the same as now" is hard to beat — while the twin wins at 60 and 120 min, which is where something
+has to be anticipated rather than repeated. Point it at a mapped ShanghaiT2DM or CGMacros file to do the same
+on real data.
 
 ### What the pipeline writes
 
@@ -344,12 +370,13 @@ UPVAAS-Twin/
 │   ├── interop/fhir.py           FHIR R4 / ABDM-shaped export
 │   ├── adapters.py               run the twin on real CGM CSVs
 │   └── service.py                API logic used by the servers
-├── scripts/                      run_pipeline.py, make_figures.py, update_readme.py, replay_cgm_csv.py
+├── scripts/                      run_pipeline.py, make_figures.py, update_readme.py,
+│                                 compare_ablations.py, validate_fhir.py, replay_cgm_csv.py
 ├── api/main.py                   FastAPI app
 ├── serve.py                      starts FastAPI, or the zero-dependency fallback
 ├── dashboard/                    clinician console (HTML/CSS/JS)
 ├── docs/                         SOLUTION.md, research_report.md, architecture.pdf, presentation.pdf
-├── reports/                      metrics.json, figures, ASHA list (generated)
+├── reports/                      metrics.json, BENCHMARK_ABLATIONS.md, figures, ASHA list (generated)
 └── tests/                        unit tests + leakage regressions
 ```
 

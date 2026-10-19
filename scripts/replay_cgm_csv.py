@@ -39,10 +39,29 @@ def make_example():
     print(f"wrote {out/'example_cgm.csv'} and {out/'example_patient.json'}")
 
 
+def report(res: dict) -> None:
+    print(json.dumps(res, indent=1))
+    print("\nHow to read this")
+    print("-" * 64)
+    print("The twin is given only the EHR JSON and the CSV. It is NOT retrained: the EHR sets the prior and")
+    print("the particle filter personalises it from the glucose trace alone. Error is measured against the")
+    print("CSV's own future readings, so it is comparable to the persistence column but NOT to the RMSE in")
+    print("reports/metrics.json, which scores against hidden true plasma glucose.\n")
+    for h in ("30min", "60min", "120min"):
+        if h not in res:
+            continue
+        t, p = res[h]["twin_rmse"], res[h]["persistence_rmse"]
+        verdict = f"twin better by {p - t:.1f} mg/dL" if t < p else f"persistence better by {t - p:.1f} mg/dL"
+        print(f"  {h:>6}: twin {t:5.1f}  vs persistence {p:5.1f}  ->  {verdict}   (n={res[h]['n']})")
+    print("\nExpect persistence to win at the shortest horizon - glucose is strongly autocorrelated over 30 min,")
+    print("and a model that simply says 'the same as now' is hard to beat there. The twin's value is at the")
+    print("horizons where something has to be anticipated rather than repeated.")
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--make-example":
         make_example()
     else:
         csv, ehr = (sys.argv[1], sys.argv[2]) if len(sys.argv) > 2 else \
             (str(DATA_DIR / "examples/example_cgm.csv"), str(DATA_DIR / "examples/example_patient.json"))
-        print(json.dumps(replay(csv, ehr), indent=1))
+        report(replay(csv, ehr))

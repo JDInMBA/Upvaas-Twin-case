@@ -11,3 +11,6 @@ artifacts/*.pkl
 artifacts/models/
 # CI scratch output
 reports/metrics_ci.json
+# per-setting ablation metrics; the comparison they produce
+# (reports/BENCHMARK_ABLATIONS.md) IS committed
+reports/metrics_q_*.json

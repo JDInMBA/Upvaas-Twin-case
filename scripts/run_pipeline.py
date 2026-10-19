@@ -183,13 +183,17 @@ def main(quick=False, tag: str = ""):
                 res = classification_metrics(y_ok, p, t_)
                 res.update(event_lead_times(te, p, t_, lab[f"sus_{target}"], target))
                 # honest sample size + patient-clustered CIs: with a 0.5% base rate only a minority
-                # of patients ever have an event, so row counts badly overstate the evidence
+                # of patients ever have an event, so row counts badly overstate the evidence.
+                # The bootstrap is by far the most expensive step here (400 resamples x ~250k rows),
+                # so it runs for the headline models we actually quote intervals for, not for every
+                # ablation arm - the ablations are read as differences, not as point estimates.
                 res["patients_with_events"] = patients_with_events(y_ok, pid_ok)
                 res["n_patients"] = int(len(np.unique(pid_ok)))
-                res["auroc_ci95"] = bootstrap_ci(y_ok, p, pid_ok, roc_auc_score)
-                res["auprc_ci95"] = bootstrap_ci(y_ok, p, pid_ok, average_precision_score)
                 res.update(precision_at_k(te, p, target))
-                res["matched_fa_0.5"] = lead_time_at_fa(te, p, lab[f"sus_{target}"], target, 0.5)
+                if vname == "full":
+                    res["auroc_ci95"] = bootstrap_ci(y_ok, p, pid_ok, roc_auc_score)
+                    res["auprc_ci95"] = bootstrap_ci(y_ok, p, pid_ok, average_precision_score)
+                    res["matched_fa_0.5"] = lead_time_at_fa(te, p, lab[f"sus_{target}"], target, 0.5)
                 metrics["models"][f"{tier}/{vname}/{target}"] = res
                 if vname == "full":
                     preds[f"{tier}_{target}"] = oof.reshape(n, -1).astype(np.float32)

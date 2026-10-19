@@ -38,6 +38,11 @@ jobs:
       - name: README results tables are not stale
         run: python scripts/update_readme.py --check
 
+      - name: FHIR R4 bundles validate against the real schema
+        run: |
+          pip install "fhir.resources==7.1.0"
+          python scripts/validate_fhir.py
+
       - name: Architecture diagram and slide deck build from the metrics file
         run: |
           python docs/make_architecture.py

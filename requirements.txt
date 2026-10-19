@@ -11,3 +11,6 @@ fastapi>=0.110,<1.0
 uvicorn>=0.27,<1.0
 # tests
 pytest>=7.4,<9.0
+# optional: `make fhir` validates the exported bundles against the real R4 schema.
+# Left out of the default install so the pipeline and dashboard have no extra dependency.
+# fhir.resources==7.1.0
