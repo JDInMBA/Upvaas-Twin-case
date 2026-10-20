@@ -57,14 +57,24 @@ def streams_from_csv(path: str) -> tuple[dict, pd.DatetimeIndex]:
     return st, idx
 
 
-def replay(csv_path: str, ehr_json, prior: PhysiologyPrior | None = None, P: int = 128) -> dict:
-    """Assimilate a real CGM trace and report the twin's forecast error vs persistence."""
+def replay(csv_path: str, ehr_json, prior: PhysiologyPrior | None = None, P: int = 128,
+           detail: bool = False) -> dict:
+    """Assimilate a real CGM trace and report the twin's forecast error vs persistence.
+
+    The twin is NOT retrained here: the EHR sets the prior and the particle filter personalises it
+    from the glucose trace alone, exactly as it would for a new patient in clinic.
+
+    With `detail=True` the per-decision predictions, persistence values and realised future readings
+    are returned as arrays too, so a caller validating a whole cohort can pool them before computing
+    error and Clarke zones rather than averaging per-patient RMSEs.
+    """
     prior = prior or PhysiologyPrior.load()
     ehr = load_ehr(ehr_json)
     st, idx = streams_from_csv(csv_path)
     out = TwinEngine(ehr, prior, st, "A_full", P=P, S=32).run(verbose=False)
     names, ds, cgm = out["feature_names"], out["dsteps"], st["cgm"][0]
-    res = {}
+    res: dict = {}
+    arrays: dict = {}
     for h, nm in ((6, "tw_g30"), (12, "tw_g60"), (24, "tw_g120")):
         ok = ds + h < len(cgm)
         pred = out["feats"][0, ok, names.index(nm)]
@@ -73,6 +83,10 @@ def replay(csv_path: str, ehr_json, prior: PhysiologyPrior | None = None, P: int
         m = ~np.isnan(fut) & ~np.isnan(now) & ~np.isnan(pred)
         res[f"{h * 5}min"] = {"twin_rmse": float(np.sqrt(np.mean((pred[m] - fut[m]) ** 2))),
                               "persistence_rmse": float(np.sqrt(np.mean((now[m] - fut[m]) ** 2))), "n": int(m.sum())}
+        if detail:
+            arrays[f"{h * 5}min"] = {"pred": pred[m], "persistence": now[m], "actual": fut[m]}
     th = out["feats"][0, -1]
     res["personalised"] = {"SI_x1e4": float(th[names.index("tw_SI")]), "Gb0": float(th[names.index("tw_Gb0")])}
+    if detail:
+        res["arrays"] = arrays
     return res

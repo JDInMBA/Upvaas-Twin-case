@@ -43,7 +43,7 @@ def _title(ax, t, sub=None):
     ax.plot([0.7, W - 0.7], [H - 1.95, H - 1.95], color="#dcdad2", lw=1)
 
 
-def _foot(ax, n, note="UPVAAS-Twin  ·  synthetic data only  ·  not a medical device"):
+def _foot(ax, n, note="UPVAAS-Twin  ·  synthetic cohort, plus one external validation on real CGM  ·  not a medical device"):
     ax.text(0.7, 0.35, note, fontsize=9, color=MUTED)
     ax.text(W - 0.7, 0.35, str(n), fontsize=9, color=MUTED, ha="right")
 
@@ -61,6 +61,18 @@ def _stat(ax, x, y, w, big, label, col=BLUE, sub=None):
     ax.text(x + w / 2, y + 0.45, label, fontsize=11, color=INK2, ha="center")
     if sub:
         ax.text(x + w / 2, y + 0.08, sub, fontsize=9, color=MUTED, ha="center")
+
+
+def _external_validation():
+    """Read reports/EXTERNAL_VALIDATION.json if the validation has been run."""
+    p = REPORT_DIR / "EXTERNAL_VALIDATION.json"
+    if not p.exists():
+        return None
+    try:
+        d = json.loads(p.read_text())
+        return d if d.get("arms", {}).get("cgm_only", {}).get("120min") else None
+    except Exception:                                    # noqa: BLE001
+        return None
 
 
 def build(m: dict, out: Path):
@@ -199,17 +211,27 @@ def build(m: dict, out: Path):
 
     # ---------------------------------------------------------------- 6 where it fails
     f, ax = _fig()
-    _title(ax, "Where it does not work - and how hard we made the test",
-           "Reported because a result you cannot break is a result you cannot trust")
+    _title(ax, "Where it does not work",
+           "Including the external validation we ran, and failed")
     cov250 = m["conformal"]["horizons"][-1]["mondrian_conformal"].get("coverage_outcome_gt250")
-    _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "Null results we are not hiding", [
-        f"The festival calendar as ML features: {g('A_full/no_calendar/hypo').get('auprc', 0):.2f} without",
-        f"   vs {A.get('auprc', 0):.2f} with - no real difference. Its value is the",
-        "   Rehearsal, days before those features exist.",
-        "The drift monitor does not work (AUROC "
-        f"{(m['drift'].get('auroc_relative_nis_for_illness') or 0):.2f}).",
-        f"Forecast bands cover {cov250:.0%} above 250 mg/dL, not 90%." if cov250 else ""],
-        fs=10.5)
+    ev = _external_validation()
+    if ev:
+        e2 = ev["arms"]["cgm_only"]["120min"]
+        _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "External validation - and it failed", [
+            f"{ev['recordings_used']} REAL CGM recordings (ShanghaiT2DM), no retraining.",
+            f"2-hour RMSE {e2['twin_rmse']:.0f} mg/dL vs {e2['persistence_rmse']:.0f} for persistence.",
+            "It does not beat 'assume glucose stays put', at any horizon.",
+            "Likeliest cause is ours: the EHR->physiology prior was",
+            "   fitted on our own simulator and has never seen a real patient."],
+            fs=10.5)
+    else:
+        _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "Null results we are not hiding", [
+            f"The festival calendar as ML features: {g('A_full/no_calendar/hypo').get('auprc', 0):.2f} without",
+            f"   vs {A.get('auprc', 0):.2f} with - no real difference.",
+            "The drift monitor does not work (AUROC "
+            f"{(m['drift'].get('auroc_relative_nis_for_illness') or 0):.2f}).",
+            f"Forecast bands cover {cov250:.0%} above 250 mg/dL, not 90%." if cov250 else ""],
+            fs=10.5)
     _card(ax, 6.85, 3.3, 5.75, 2.1, BAND["grey"], "We made the benchmark harder on purpose", [
         "The virtual body runs a DIFFERENT model from the twin:",
         "   3-compartment gut, interstitial insulin delay,",
@@ -224,12 +246,15 @@ def build(m: dict, out: Path):
         f"Hyperglycaemia AUPRC {tv.get('auprc', 0):.2f}, against {Ah.get('auprc', 0):.2f} for the",
         "   full model. We publish it so the reader can see",
         "   how much is physiology and how much is timetable."], fs=10.5)
-    _card(ax, 6.85, 0.95, 5.75, 2.2, BAND["grey"], "Limits we state first", [
-        "Synthetic data: upper bounds, not clinical evidence.",
-        f"Only {A.get('patients_with_events', 0)} of {A.get('n_patients', 0)} patients ever had a hypo event,",
-        "   so the confidence intervals are wide - and printed.",
-        "Karva Chauth, our flagship case, is the smallest cell.",
-        "Next: external validation on ShanghaiT2DM / CGMacros."], fs=10.5)
+    _card(ax, 6.85, 0.95, 5.75, 2.2, BAND["grey"], "Other null results, and limits", [
+        f"The calendar as ML FEATURES adds nothing ({g('A_full/no_calendar/hypo').get('auprc', 0):.2f} vs "
+        f"{A.get('auprc', 0):.2f});",
+        "   its value is the Rehearsal, days earlier.",
+        f"The drift monitor does not work (AUROC "
+        f"{(m['drift'].get('auroc_relative_nis_for_illness') or 0):.2f}).",
+        f"Bands cover {cov250:.0%} above 250 mg/dL, not 90%." if cov250 else "",
+        f"Only {A.get('patients_with_events', 0)} of {A.get('n_patients', 0)} patients ever had a hypo event."],
+        fs=10.5)
     _foot(ax, 6)
     pages.append(f)
 

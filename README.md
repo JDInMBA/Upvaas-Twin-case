@@ -23,6 +23,7 @@ bash run.sh --quick     # venv, build, dashboard at http://localhost:8000  (~4 m
 | **What makes it a *twin*** | Mechanistic ODE personalised by a particle filter, then replayed **counterfactually**: "what if she moves her glimepiride to the fast-breaking meal?" |
 | **Headline result** | Without a CGM, the twin lifts 2-h hypoglycaemia AUPRC **0.08 → 0.13** and cuts false alarms **5.4 → 2.7** per patient-day. Of 20 patients flagged each morning, ~5 have a real event (0.9% base rate) |
 | **How hard the test is** | The virtual body runs a **different model** from the twin, eating is deliberately messy, and a 4-feature timetable baseline is published beside every headline |
+| **External validation** | Run on **107 real CGM recordings** (ShanghaiT2DM). **The twin did not beat persistence** — reported in full with our diagnosis in [`reports/EXTERNAL_VALIDATION.md`](reports/EXTERNAL_VALIDATION.md) |
 | **Honesty** | Patient-clustered CIs on every number · null results in §3, not a footnote · leakage regression tests · FHIR bundles validated against the real R4 schema |
 
 Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json); full tables in **[§3 Results](#3-results)**.
@@ -241,6 +242,28 @@ Two more things are checked rather than asserted:
 **FHIR R4 export is validated, not just named.** `make fhir` parses every bundle in `data/fhir/` plus a freshly
 generated one with the `fhir.resources` R4B schema; CI runs it on every push. Base-R4 validity is a necessary
 step towards ABDM conformance, not a substitute for the NRCeS India profiles, and the script says so.
+
+### We ran an external validation, and it failed
+
+A proof of concept measured only on its own simulator proves very little, so we ran the twin — unmodified and
+**not retrained** — on **ShanghaiT2DM**: 107 real continuous-glucose recordings from people with type 2
+diabetes, 17 of them on a sulfonylurea (Zhao et al., *Scientific Data* 10:35, 2023, CC BY 4.0).
+
+**It did not beat persistence at any horizon.** At 2 hours it reached **52 mg/dL RMSE against 46 mg/dL** for
+simply assuming glucose stays where it is. On our own simulator the same twin is at ~38 mg/dL and comfortably
+ahead of persistence. It does not transfer.
+
+Our best diagnosis, in order of likely importance: the EHR → physiology prior is a ridge regression fitted on
+**our own synthetic generator and has never seen a real patient**, so every particle starts in the wrong place;
+the dataset has no quantified meals, so the twin forecasts as if fasting (and assuming a fixed portion per
+logged meal was *worse still*); and the traces are 15-minute, so the filter updates a third as often as it was
+designed for. The full write-up, the sulfonylurea subgroup and what would have to change are in
+[`reports/EXTERNAL_VALIDATION.md`](reports/EXTERNAL_VALIDATION.md); reproduce it with
+`python scripts/validate_shanghai.py <extracted dataset>`.
+
+We are reporting this rather than omitting it. It puts a number on the warning this README already carried —
+**the simulated results are an upper bound** — and shows the gap is large rather than cosmetic. It does not
+change the design or any simulated result; it changes how much weight a reader should put on them.
 
 ---
 

@@ -1,0 +1,116 @@
+{
+ "dataset": "ShanghaiT2DM (Zhao et al., Scientific Data 10:35, 2023), CC BY 4.0",
+ "doi": "10.6084/m9.figshare.20444397",
+ "recordings_used": 107,
+ "recordings_skipped": 2,
+ "patients_on_sulfonylurea": 17,
+ "retrained": false,
+ "arms": {
+  "cgm_only": {
+   "30min": {
+    "n": 18918,
+    "twin_rmse": 34.535892486572266,
+    "persistence_rmse": 18.408178329467773,
+    "twin_mard": 19.74041175842285,
+    "twin_clarke_AB": 0.9561793001374352,
+    "persistence_clarke_AB": 0.9944497304154774
+   },
+   "60min": {
+    "n": 18877,
+    "twin_rmse": 43.292823791503906,
+    "persistence_rmse": 30.81968879699707,
+    "twin_mard": 24.360389709472656,
+    "twin_clarke_AB": 0.9339937490067277,
+    "persistence_clarke_AB": 0.9818297398951105
+   },
+   "120min": {
+    "n": 18795,
+    "twin_rmse": 52.20541763305664,
+    "persistence_rmse": 45.97507858276367,
+    "twin_mard": 28.410139083862305,
+    "twin_clarke_AB": 0.9140196860867252,
+    "persistence_clarke_AB": 0.9548816174514498
+   }
+  },
+  "cgm_plus_meal_times": {
+   "30min": {
+    "n": 18918,
+    "twin_rmse": 56.49169158935547,
+    "persistence_rmse": 18.408178329467773,
+    "twin_mard": 29.908498764038086,
+    "twin_clarke_AB": 0.9036367480706206,
+    "persistence_clarke_AB": 0.9944497304154774
+   },
+   "60min": {
+    "n": 18877,
+    "twin_rmse": 62.904319763183594,
+    "persistence_rmse": 30.81968879699707,
+    "twin_mard": 33.980430603027344,
+    "twin_clarke_AB": 0.882131694654871,
+    "persistence_clarke_AB": 0.9818297398951105
+   },
+   "120min": {
+    "n": 18795,
+    "twin_rmse": 67.95565795898438,
+    "persistence_rmse": 45.97507858276367,
+    "twin_mard": 36.99314880371094,
+    "twin_clarke_AB": 0.8765097100292631,
+    "persistence_clarke_AB": 0.9548816174514498
+   }
+  }
+ },
+ "sulfonylurea_subgroup": {
+  "cgm_only": {
+   "30min": {
+    "n": 3385,
+    "twin_rmse": 31.64643096923828,
+    "persistence_rmse": 18.20494270324707,
+    "twin_mard": 14.389111518859863,
+    "twin_clarke_AB": 0.9745937961595273,
+    "persistence_clarke_AB": 0.9929098966026588
+   },
+   "60min": {
+    "n": 3378,
+    "twin_rmse": 43.935523986816406,
+    "persistence_rmse": 30.323261260986328,
+    "twin_mard": 19.55425262451172,
+    "twin_clarke_AB": 0.9280639431616341,
+    "persistence_clarke_AB": 0.9849023090586145
+   },
+   "120min": {
+    "n": 3364,
+    "twin_rmse": 59.52745056152344,
+    "persistence_rmse": 45.13471221923828,
+    "twin_mard": 25.930753707885742,
+    "twin_clarke_AB": 0.9081450653983353,
+    "persistence_clarke_AB": 0.9655172413793104
+   }
+  },
+  "cgm_plus_meal_times": {
+   "30min": {
+    "n": 3385,
+    "twin_rmse": 39.67539596557617,
+    "persistence_rmse": 18.20494270324707,
+    "twin_mard": 19.99480628967285,
+    "twin_clarke_AB": 0.9595273264401772,
+    "persistence_clarke_AB": 0.9929098966026588
+   },
+   "60min": {
+    "n": 3378,
+    "twin_rmse": 48.835201263427734,
+    "persistence_rmse": 30.323261260986328,
+    "twin_mard": 24.796428680419922,
+    "twin_clarke_AB": 0.9209591474245116,
+    "persistence_clarke_AB": 0.9849023090586145
+   },
+   "120min": {
+    "n": 3364,
+    "twin_rmse": 59.6793327331543,
+    "persistence_rmse": 45.13471221923828,
+    "twin_mard": 29.954421997070312,
+    "twin_clarke_AB": 0.9164684898929846,
+    "persistence_clarke_AB": 0.9655172413793104
+   }
+  }
+ }
+}

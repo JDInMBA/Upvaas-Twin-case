@@ -117,7 +117,11 @@ version so the difference is visible.
 of day — with no glucose, no wearable and no twin. If that approaches the full model, the benchmark is measuring
 a timetable rather than physiology, and §7 says so.
 
-**6.4 A leakage regression test.** `tests/test_core.py::test_no_feature_reads_future_truth` perturbs the future
+**6.4 An external validation that we published even though it failed.** `scripts/validate_shanghai.py` runs
+the twin on real ShanghaiT2DM recordings with no retraining. The result is negative and is reported in full in
+`reports/EXTERNAL_VALIDATION.md` and in README §5. A benchmark you only ever pass tells a reader nothing.
+
+**6.5 A leakage regression test.** `tests/test_core.py::test_no_feature_reads_future_truth` perturbs the future
 and asserts that **no** feature computed at the decision time changes. An off-by-one window cannot silently
 inflate any number in this repository.
 
@@ -214,9 +218,14 @@ The normalised-innovation monitor detects illness days with AUROC only **0.53** 
 
 ## 8. Honest limits
 
-1. **The data are synthetic.** Everything here is an upper bound on what the same method would achieve
-   clinically. No real patient has been involved. External validation on ShanghaiT2DM and CGMacros is the
-   immediate next step and the adapter is already written.
+1. **External validation failed, and that is the most important limitation here.** We ran the twin,
+   unmodified and not retrained, on 107 real CGM recordings from ShanghaiT2DM. It did not beat persistence at
+   any horizon (52 vs 46 mg/dL RMSE at 2 hours, against ~38 mg/dL and a clear win on our own simulator). The
+   likeliest cause is ours: the EHR → physiology prior is fitted on our own synthetic generator and has never
+   seen a real patient, so every particle starts from the wrong place. The dataset also has no quantified
+   meals and samples at 15 minutes rather than 5. Full write-up and next steps in
+   `reports/EXTERNAL_VALIDATION.md`. Everything else in this document is simulation, and this is how far
+   simulation turned out to be from reality.
 2. **The hypoglycaemia evidence rests on a minority of patients.** At a ~0.5% base rate only a fraction of the
    cohort ever has an event, which is why every headline number carries a patient-clustered bootstrap interval
    and why the count of patients-with-events is printed next to it.
