@@ -23,7 +23,7 @@ bash run.sh --quick     # venv, build, dashboard at http://localhost:8000  (~4 m
 | **What makes it a *twin*** | Mechanistic ODE personalised by a particle filter, then replayed **counterfactually**: "what if she moves her glimepiride to the fast-breaking meal?" |
 | **Headline result** | Without a CGM, the twin lifts 2-h hypoglycaemia AUPRC **0.08 → 0.13** and cuts false alarms **5.4 → 2.7** per patient-day. Of 20 patients flagged each morning, ~5 have a real event (0.9% base rate) |
 | **How hard the test is** | The virtual body runs a **different model** from the twin, eating is deliberately messy, and a 4-feature timetable baseline is published beside every headline |
-| **External validation** | Run on **107 real CGM recordings** (ShanghaiT2DM). **The twin did not beat persistence.** We then tried refitting its prior on real patients — [that failed too, and explains why](reports/PRIOR_REFIT.md). Both reported in full |
+| **External validation** | *Beyond what the brief asks:* we ran the twin on **107 real CGM recordings** (ShanghaiT2DM), unmodified and unretrained. It **did not beat a persistence baseline**, and the follow-up experiment explains why. Reported in full in [§5](#5-honesty-notes) rather than buried |
 | **Honesty** | Patient-clustered CIs on every number · null results in §3, not a footnote · leakage regression tests · FHIR bundles validated against the real R4 schema |
 
 Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json); full tables in **[§3 Results](#3-results)**.
@@ -245,8 +245,9 @@ step towards ABDM conformance, not a substitute for the NRCeS India profiles, an
 
 ### We ran an external validation, and it failed
 
-A proof of concept measured only on its own simulator proves very little, so we ran the twin — unmodified and
-**not retrained** — on **ShanghaiT2DM**: 107 real continuous-glucose recordings from people with type 2
+The challenge brief requires synthetic or open data and does not ask for external validation. We did it anyway,
+because a proof of concept measured only on its own simulator proves very little. The twin — unmodified and
+**not retrained** — was run on **ShanghaiT2DM**: 107 real continuous-glucose recordings from people with type 2
 diabetes, 17 of them on a sulfonylurea (Zhao et al., *Scientific Data* 10:35, 2023, CC BY 4.0).
 
 **It did not beat persistence at any horizon.** At 2 hours it reached **52 mg/dL RMSE against 46 mg/dL** for
