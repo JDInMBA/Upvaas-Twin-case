@@ -223,9 +223,18 @@ The normalised-innovation monitor detects illness days with AUROC only **0.53** 
    any horizon (52 vs 46 mg/dL RMSE at 2 hours, against ~38 mg/dL and a clear win on our own simulator). The
    likeliest cause is ours: the EHR → physiology prior is fitted on our own synthetic generator and has never
    seen a real patient, so every particle starts from the wrong place. The dataset also has no quantified
-   meals and samples at 15 minutes rather than 5. Full write-up and next steps in
-   `reports/EXTERNAL_VALIDATION.md`. Everything else in this document is simulation, and this is how far
-   simulation turned out to be from reality.
+   meals and samples at 15 minutes rather than 5. Full write-up in `reports/EXTERNAL_VALIDATION.md`.
+
+   **We then tried the obvious fix, and it failed too — which is the more useful finding**
+   (`reports/PRIOR_REFIT.md`). Refitting the EHR → physiology prior on real patients, with 39 patients for
+   tuning and 59 held out and scored once, left the held-out result unchanged (ratio 1.10). Merely *widening*
+   the existing prior reached 1.01 — parity with persistence, not better than it. The refit's residual spread
+   exploded (hepatic set-point SD 8 → 40 mg/dL; ln SI 0.22 → 1.26), which says routine EHR fields barely
+   predict these physiological parameters in a real cohort. Innovation #3 in §4 — "static data sets the
+   prior" — works on our synthetic data partly *because* the simulator generated the labs from those
+   parameters in the first place. On real patients it would need physiological reference data (clamp or OGTT
+   studies), not routine labs. Everything else in this document is simulation, and this is how far simulation
+   turned out to be from reality.
 2. **The hypoglycaemia evidence rests on a minority of patients.** At a ~0.5% base rate only a fraction of the
    cohort ever has an event, which is why every headline number carries a patient-clustered bootstrap interval
    and why the count of patients-with-events is printed next to it.

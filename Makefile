@@ -2,7 +2,7 @@ PY ?= python3
 # bit-exact reproducibility (see run.sh)
 export OMP_NUM_THREADS = 1
 
-.PHONY: setup pipeline quick serve test figures architecture presentation ablations fhir all
+.PHONY: setup pipeline quick serve test figures architecture presentation ablations external fhir all
 
 setup:            ## create a virtual environment and install dependencies
 	$(PY) -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
@@ -34,6 +34,11 @@ architecture:
 
 presentation:     ## build docs/presentation.pdf from reports/metrics.json
 	$(PY) docs/make_presentation.py
+
+external:         ## run the twin on real CGM data you have downloaded (see reports/EXTERNAL_VALIDATION.md)
+	@test -n "$(SHANGHAI)" || (echo "usage: make external SHANGHAI=/path/to/extracted_shanghai"; exit 1)
+	$(PY) scripts/validate_shanghai.py "$(SHANGHAI)"
+	$(PY) scripts/refit_prior_shanghai.py "$(SHANGHAI)"
 
 fhir:             ## validate the exported bundles against the real FHIR R4 schema (optional dep)
 	$(PY) -m pip install -q "fhir.resources==7.1.0" && $(PY) scripts/validate_fhir.py

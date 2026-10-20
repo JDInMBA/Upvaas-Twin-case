@@ -322,8 +322,12 @@ def main() -> int:
               "precisely how far this prototype is from clinical usefulness, which is more than most digital-twin "
               "papers make possible.", "",
               "### What would have to happen next", "",
-              "* Refit the EHR → physiology prior on real cohorts (ShanghaiT2DM itself, CGMacros, or an Indian "
-              "cohort) instead of on our own simulator.",
+              "* ~~Refit the EHR → physiology prior on real cohorts instead of on our own simulator.~~ "
+              "**We tried this** — see `reports/PRIOR_REFIT.md`. It did not help. Refitting on real patients "
+              "left the held-out result unchanged; the regression's residual spread exploded, which says the "
+              "routine EHR fields barely predict these physiological parameters in a real cohort at all. "
+              "Widening the prior and raising the assumed sensor noise moved the held-out ratio from 1.10 to "
+              "1.01 — parity with persistence, not better than it.",
               "* Handle sparse and irregular sampling explicitly rather than upsampling to a 5-minute grid.",
               "* Fit the observation-noise and process-noise constants per sensor.",
               "* Then repeat this exact script and see whether the numbers move.", ""]

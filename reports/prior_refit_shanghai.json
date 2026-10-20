@@ -1,0 +1,49 @@
+{
+ "n_patients_tuning": 39,
+ "n_patients_held_out": 59,
+ "chosen": {
+  "sd_mult": 4.0,
+  "obs_sd": 25.0,
+  "proc_sd": 1.5
+ },
+ "held_out": {
+  "original_prior": {
+   "n": 10340,
+   "track_rmse": 24.267690658569336,
+   "twin_rmse_120": 46.5792350769043,
+   "persistence_rmse_120": 42.41596603393555,
+   "ratio": 1.0981533472475402,
+   "bias_120": 1.9470771551132202
+  },
+  "original_prior_wider": {
+   "n": 10340,
+   "track_rmse": 26.859699249267578,
+   "twin_rmse_120": 42.88283920288086,
+   "persistence_rmse_120": 42.41596603393555,
+   "ratio": 1.0110070148719892,
+   "bias_120": -3.3808908462524414
+  },
+  "refit_prior": {
+   "n": 10340,
+   "track_rmse": 32.01523208618164,
+   "twin_rmse_120": 46.579105377197266,
+   "persistence_rmse_120": 42.41596603393555,
+   "ratio": 1.0981502894436246,
+   "bias_120": 0.9105179905891418
+  }
+ },
+ "prior_sd_synthetic": {
+  "log_SI": 0.22,
+  "log_beta": 0.23,
+  "Gb0": 8.25,
+  "log_su_gain": 0.29,
+  "log_su_thalf": 0.03
+ },
+ "prior_sd_refit_on_real": {
+  "log_SI": 1.26,
+  "log_beta": 1.29,
+  "Gb0": 39.52,
+  "log_su_gain": 1.2,
+  "log_su_thalf": 0.23
+ }
+}

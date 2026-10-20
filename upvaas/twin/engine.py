@@ -62,8 +62,13 @@ def _sample_idx(w: np.ndarray, S: int, rng) -> np.ndarray:
 
 class TwinEngine:
     def __init__(self, ehr: pd.DataFrame, prior: PhysiologyPrior, streams: dict, tier: str,
-                 P: int = 64, S: int = 24, seed: int = 11):
+                 P: int = 64, S: int = 24, seed: int = 11, proc_sd: float = 3.0):
         self.ehr, self.st, self.tier, self.P, self.S = ehr, streams, tier, P, S
+        # Process noise on glucose per 5-min step. Together with obs_sd this sets how much the
+        # filter trusts its own model versus the sensor, and both are sensor-specific: a 15-minute
+        # Libre trace needs a different setting from 5-minute CGM. _inputs() picks a default per
+        # tier; callers working with other hardware override it.
+        self.proc_sd = proc_sd
         self.rng = np.random.default_rng(seed)
         N = len(ehr)
         self.N = N
@@ -136,7 +141,7 @@ class TwinEngine:
                 s["A"] = s["A"] + sd_[:, None]
             step(s, par, 5.0, mod, act=self.act[:, k][:, None], si_mult=self.si_day[:, d][:, None],
                  gb_mult=self.gb5[:, k][:, None])
-            s["G"] = np.clip(s["G"] + rng.normal(0, 3.0, (N, P)), 20, 600)
+            s["G"] = np.clip(s["G"] + rng.normal(0, self.proc_sd, (N, P)), 20, 600)
             if self.obs is not None and self.tier == "A_full":
                 # unannounced-meal hypothesis: a few particles assume the patient ate something unlogged
                 snack = (rng.random((N, P)) < SNACK_P) * SNACK_MG

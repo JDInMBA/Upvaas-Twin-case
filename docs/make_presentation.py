@@ -75,6 +75,18 @@ def _external_validation():
         return None
 
 
+def _prior_refit():
+    """Read reports/prior_refit_shanghai.json if the refit experiment has been run."""
+    p = REPORT_DIR / "prior_refit_shanghai.json"
+    if not p.exists():
+        return None
+    try:
+        d = json.loads(p.read_text())
+        return d if d.get("held_out", {}).get("refit_prior") else None
+    except Exception:                                    # noqa: BLE001
+        return None
+
+
 def build(m: dict, out: Path):
     g = lambda k: m["models"][k]                                     # noqa: E731
     bd = m.get("benchmark_difficulty", {})
@@ -215,14 +227,15 @@ def build(m: dict, out: Path):
            "Including the external validation we ran, and failed")
     cov250 = m["conformal"]["horizons"][-1]["mondrian_conformal"].get("coverage_outcome_gt250")
     ev = _external_validation()
+    rf = _prior_refit()
     if ev:
         e2 = ev["arms"]["cgm_only"]["120min"]
         _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "External validation - and it failed", [
             f"{ev['recordings_used']} REAL CGM recordings (ShanghaiT2DM), no retraining.",
             f"2-hour RMSE {e2['twin_rmse']:.0f} mg/dL vs {e2['persistence_rmse']:.0f} for persistence.",
             "It does not beat 'assume glucose stays put', at any horizon.",
-            "Likeliest cause is ours: the EHR->physiology prior was",
-            "   fitted on our own simulator and has never seen a real patient."],
+            "We then refit the prior on real patients to fix it.",
+            "   That failed too - and told us why. ->"],
             fs=10.5)
     else:
         _card(ax, 0.7, 3.3, 5.9, 2.1, BAND["orange"], "Null results we are not hiding", [
@@ -232,13 +245,23 @@ def build(m: dict, out: Path):
             f"{(m['drift'].get('auroc_relative_nis_for_illness') or 0):.2f}).",
             f"Forecast bands cover {cov250:.0%} above 250 mg/dL, not 90%." if cov250 else ""],
             fs=10.5)
-    _card(ax, 6.85, 3.3, 5.75, 2.1, BAND["grey"], "We made the benchmark harder on purpose", [
-        "The virtual body runs a DIFFERENT model from the twin:",
-        "   3-compartment gut, interstitial insulin delay,",
-        "   circadian SI, renal excretion, incretin.",
-        f"Meal plan vs what was eaten: r = {bd.get('plan_vs_logged_carb_corr_2h', 0):.2f}, with",
-        f"   {bd.get('real_intake_that_was_unplanned', 0):.0%} of intake unplanned - a prior, not an oracle."],
-        fs=10.5)
+    if rf:
+        h = rf["held_out"]
+        _card(ax, 6.85, 3.3, 5.75, 2.1, BAND["orange"], "Why it failed - the real finding", [
+            f"Refit on real patients: ratio {h['refit_prior']['ratio']:.2f} - no change.",
+            f"Just WIDENING the prior: {h['original_prior_wider']['ratio']:.2f} - parity, not better.",
+            "The refit's residual spread exploded (Gb0 SD 8 -> 40):",
+            "   routine EHR fields barely predict physiology in a",
+            "   REAL cohort. Ours predicted it because we built it that way."],
+            fs=10.5)
+    else:
+        _card(ax, 6.85, 3.3, 5.75, 2.1, BAND["grey"], "We made the benchmark harder on purpose", [
+            "The virtual body runs a DIFFERENT model from the twin:",
+            "   3-compartment gut, interstitial insulin delay,",
+            "   circadian SI, renal excretion, incretin.",
+            f"Meal plan vs what was eaten: r = {bd.get('plan_vs_logged_carb_corr_2h', 0):.2f}, with",
+            f"   {bd.get('real_intake_that_was_unplanned', 0):.0%} of intake unplanned - a prior, not an oracle."],
+            fs=10.5)
     tv = m["models"].get("A_full/trivial_calendar_baseline/hyper", {})
     _card(ax, 0.7, 0.95, 5.9, 2.2, BAND["green"], "The baseline that keeps us honest", [
         "Four features - planned carbs, HbA1c, time of day.",

@@ -23,7 +23,7 @@ bash run.sh --quick     # venv, build, dashboard at http://localhost:8000  (~4 m
 | **What makes it a *twin*** | Mechanistic ODE personalised by a particle filter, then replayed **counterfactually**: "what if she moves her glimepiride to the fast-breaking meal?" |
 | **Headline result** | Without a CGM, the twin lifts 2-h hypoglycaemia AUPRC **0.08 → 0.13** and cuts false alarms **5.4 → 2.7** per patient-day. Of 20 patients flagged each morning, ~5 have a real event (0.9% base rate) |
 | **How hard the test is** | The virtual body runs a **different model** from the twin, eating is deliberately messy, and a 4-feature timetable baseline is published beside every headline |
-| **External validation** | Run on **107 real CGM recordings** (ShanghaiT2DM). **The twin did not beat persistence** — reported in full with our diagnosis in [`reports/EXTERNAL_VALIDATION.md`](reports/EXTERNAL_VALIDATION.md) |
+| **External validation** | Run on **107 real CGM recordings** (ShanghaiT2DM). **The twin did not beat persistence.** We then tried refitting its prior on real patients — [that failed too, and explains why](reports/PRIOR_REFIT.md). Both reported in full |
 | **Honesty** | Patient-clustered CIs on every number · null results in §3, not a footnote · leakage regression tests · FHIR bundles validated against the real R4 schema |
 
 Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json); full tables in **[§3 Results](#3-results)**.
@@ -264,6 +264,25 @@ designed for. The full write-up, the sulfonylurea subgroup and what would have t
 We are reporting this rather than omitting it. It puts a number on the warning this README already carried —
 **the simulated results are an upper bound** — and shows the gap is large rather than cosmetic. It does not
 change the design or any simulated result; it changes how much weight a reader should put on them.
+
+**We then tried to fix it, and that is the most interesting result in the project.**
+([`reports/PRIOR_REFIT.md`](reports/PRIOR_REFIT.md); 39 patients for tuning, 59 held out and scored once.)
+
+| Held-out patients | 2-h twin RMSE | Persistence | Ratio |
+|---|---|---|---|
+| Original prior (as submitted) | 46.6 mg/dL | 42.4 mg/dL | 1.10 |
+| **Original prior, simply widened** | **42.9 mg/dL** | 42.4 mg/dL | **1.01** |
+| Prior refitted on real patients | 46.6 mg/dL | 42.4 mg/dL | 1.10 |
+
+Refitting the prior on real patients **did not help at all**. What helped was admitting more uncertainty — and
+only as far as *parity* with persistence. The refit explains why: its residual spread exploded (hepatic
+set-point SD **8 → 40 mg/dL**, ln SI **0.22 → 1.26**). **In a real cohort the routine EHR fields barely predict
+these physiological parameters**, whereas in our simulator they predict them well *because the simulator
+generated the labs from those parameters in the first place.*
+
+That is the honest account of the whole simulation-to-reality gap, and it is worth more than a patched number:
+"static data sets the prior" is a sound idea that our own evidence says needs real physiological reference data
+— clamp or OGTT studies — not routine labs, before it will work on a real patient.
 
 ---
 
