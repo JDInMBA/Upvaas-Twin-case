@@ -213,7 +213,7 @@ Across sulfonylurea-treated fasters, moving the dose to the fast-breaking meal l
 
 The normalised-innovation monitor detects illness days with AUROC only **0.53** (33% sensitivity at a 29% false-flag rate). We ship it as the hook a CDSCO Algorithm Change Protocol would attach to, and report it as **not yet good enough to deploy**.
 
-*Full pipeline runtime: 15 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
+*Full pipeline runtime: 14 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
 <!-- RESULTS:END -->
 
 ## 8. Honest limits

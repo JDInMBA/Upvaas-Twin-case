@@ -24,6 +24,18 @@ def check_artifacts():
     missing = [str(p.relative_to(ROOT)) for p in need if not p.exists()]
     if missing:
         sys.exit("Artifacts missing: " + ", ".join(missing) + "\nRun first:  python scripts/run_pipeline.py")
+    # Artefacts written by a different pandas/scikit-learn major version cannot be read back.
+    # Catch that here rather than letting the dashboard return a 500 on its first request.
+    sys.path.insert(0, str(ROOT / "scripts"))
+    try:
+        from check_build_env import check
+    except Exception:                                  # noqa: BLE001 - never block startup on this
+        return
+    ok, msg = check()
+    if not ok:
+        sys.exit(f"Artifacts are stale: {msg}\n\nRebuild them with:\n"
+                 "  bash run.sh --rebuild                     # full, about 15 min\n"
+                 "  python scripts/run_pipeline.py --quick    # 60 patients, about 4 min")
 
 
 def run_fastapi():

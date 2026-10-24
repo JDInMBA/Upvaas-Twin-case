@@ -34,18 +34,16 @@ Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json
 
 | | |
 |---|---|
-| **Team name** | `<Team Name>` |
-| **College / incubator** | `<College Name / Incubator>` |
-| **Team leader** | `<Name>` · `<email>` · `<phone>` |
-| **Members** | `<Name 1 (discipline)>`, `<Name 2>`, `<Name 3>` |
+| **Team name** | Breakpoint Consulting |
+| **College / incubator** | Symbiosis Institute of Management Studies, Pune |
+| **Team leader** | Jay Raviraj Deore · jay.deore2027@sims.edu · 9307842683 |
 | **Project title** | UPVAAS-Twin: festival- and fasting-aware digital twin for predicting sulfonylurea-related hypoglycaemia and post-fast hyperglycaemia in Indian type 2 diabetes |
-| **Video (≥20 min)** | `<unlisted YouTube link>` — shot list in [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) |
-| **Presentation** | [docs/presentation.pdf](docs/presentation.pdf) (rebuild: `make presentation`) |
-| **Architecture diagram** | [docs/architecture.pdf](docs/architecture.pdf) (rebuild: `make architecture`) |
-| **Licence** | MIT — see [LICENSE](LICENSE). Generated synthetic data: CC0 1.0 |
-
-> **Before submitting:** rename the repository folder to **`TeamName_CollegeName`**, fill in the four placeholder
-> rows above, and paste the video link. Those are the brief's explicit requirements.
+| **Condition and adverse events** | Type 2 diabetes. Hypoglycaemia (&lt;70 mg/dL) and hyperglycaemia (&gt;250 mg/dL), each predicted two hours ahead |
+| **Demo video (15–20 min)** | VIDEO_LINK_HERE |
+| **Presentation (PPT)** | [docs/presentation.pptx](docs/presentation.pptx) |
+| **Architecture diagram (PDF)** | [docs/architecture.pdf](docs/architecture.pdf) |
+| **Open-source licence** | MIT, see [LICENSE](LICENSE). Generated synthetic data released under CC0 1.0 |
+| **Access** | This repository is public. Every file and link above is reachable without any additional permission |
 
 **Not a medical device.** A research prototype trained and evaluated only on synthetic data. It informs a
 registered medical practitioner; it decides nothing.
@@ -70,7 +68,9 @@ assume a CGM, and ignore the calendar.
 **The Indian twist:** sulfonylurea-treated patients during religious fasts — a dangerous state that is common,
 unmonitored, and **scheduled**, and therefore predictable.
 
-**Use case.** A diabetologist or Ayushman Arogya Mandir doctor sees every patient's 2-hour risk, understands
+### Healthcare use case
+
+A diabetologist or Ayushman Arogya Mandir doctor sees every patient's 2-hour risk, understands
 *why* (counterfactual drivers and the twin's mechanistic parameters), and can run a **Vrat Rehearsal** for
 tomorrow's fast: usual dose vs moved to the fast-breaking meal vs halved vs low-GI foods. ASHAs get a ranked
 **pre-festival recall list**. The same twin degrades gracefully from CGM to fingersticks to phone-only patients.
@@ -167,7 +167,7 @@ Across sulfonylurea-treated fasters, moving the dose to the fast-breaking meal l
 
 The normalised-innovation monitor detects illness days with AUROC only **0.53** (33% sensitivity at a 29% false-flag rate). We ship it as the hook a CDSCO Algorithm Change Protocol would attach to, and report it as **not yet good enough to deploy**.
 
-*Full pipeline runtime: 15 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
+*Full pipeline runtime: 14 min on a laptop CPU (`--quick` builds 60 patients in about 4).*
 <!-- RESULTS:END -->
 
 ![degradation](reports/figures/degradation.png)
@@ -287,7 +287,7 @@ That is the honest account of the whole simulation-to-reality gap, and it is wor
 
 ---
 
-## 6. Technical stack
+## 6. Technical stack and AI/ML model details
 
 | Layer | What | Tech |
 |---|---|---|
@@ -303,6 +303,20 @@ That is the honest account of the whole simulation-to-reality gap, and it is wor
 | What-if | 36-h counterfactual replay on posterior particles | NumPy |
 | Interop | FHIR R4 bundles (Patient, Observation, MedicationStatement, RiskAssessment, ABDM-style Consent) | JSON |
 | Serving & UI | REST API + clinician console | FastAPI/uvicorn (or stdlib fallback), vanilla JS, Plotly.js |
+
+### AI/ML model and framework details
+
+| | |
+|---|---|
+| **Mechanistic core** | SU-Bergman-Gut ODE: Bergman minimal model + two-compartment gut with GI-dependent absorption + sulfonylurea PK/PD + fasting clock + counter-regulation. Custom NumPy, explicit Euler at 5-minute steps |
+| **Personalisation** | Sequential Monte Carlo (bootstrap particle filter), 64 particles per patient over 5 parameters, systematic resampling, hourly random-walk jitter. Custom NumPy |
+| **Prior** | Ridge regression, one per physiological parameter, fitted on a separate reference cohort. scikit-learn |
+| **Risk model** | `HistGradientBoostingClassifier` (scikit-learn), 200 iterations, learning rate 0.06, 31 leaves, L2 1.0, early stopping off. Trained on ~69 fused features |
+| **Calibration** | Isotonic regression on held-out calibration patients; alarm threshold set for 80% recall |
+| **Uncertainty** | Mondrian (class-conditional) cross-conformal prediction, calibrated per predicted-glucose stratum |
+| **Explainability** | Counterfactual feature-group attribution, plus the twin's own mechanistic parameters shown against their priors |
+| **Counterfactual engine** | 36-hour forward replay on the posterior particle set, with an AR(1) model-error process |
+| **Frameworks** | Python 3.10+, NumPy, pandas, scikit-learn, matplotlib, FastAPI, Plotly.js, python-pptx |
 
 **Evaluation.** 5-fold **patient-grouped** cross-validation — every patient is scored by models that never saw
 them, in the dashboard as well as in the metrics. Early stopping is deliberately **off**: scikit-learn's internal

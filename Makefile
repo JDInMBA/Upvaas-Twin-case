@@ -1,8 +1,9 @@
-PY ?= python3
+# Prefer the project's own venv; macOS `python3` is 3.9 and lacks the dependencies.
+PY ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 # bit-exact reproducibility (see run.sh)
 export OMP_NUM_THREADS = 1
 
-.PHONY: setup pipeline quick serve test figures architecture presentation ablations external fhir all
+.PHONY: setup pipeline quick serve test figures architecture presentation screens ablations external fhir all
 
 setup:            ## create a virtual environment and install dependencies
 	$(PY) -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
@@ -39,6 +40,10 @@ external:         ## run the twin on real CGM data you have downloaded (see repo
 	@test -n "$(SHANGHAI)" || (echo "usage: make external SHANGHAI=/path/to/extracted_shanghai"; exit 1)
 	$(PY) scripts/validate_shanghai.py "$(SHANGHAI)"
 	$(PY) scripts/refit_prior_shanghai.py "$(SHANGHAI)"
+
+screens:          ## recapture the dashboard screenshots the deck uses (needs the server running)
+	$(PY) -m pip install -q playwright && $(PY) -m playwright install chromium
+	$(PY) scripts/capture_screens.py
 
 fhir:             ## validate the exported bundles against the real FHIR R4 schema (optional dep)
 	$(PY) -m pip install -q "fhir.resources==7.1.0" && $(PY) scripts/validate_fhir.py

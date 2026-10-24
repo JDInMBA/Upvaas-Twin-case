@@ -127,7 +127,13 @@ def main(quick=False, tag: str = ""):
         tables[tier] = build_features(ehr, st, twins[tier], tier)
     fa = tables["A_full"]
     fcols = fa.select_dtypes("float64").columns
-    fa.astype({c: "float32" for c in fcols}).to_pickle(ARTIFACT_DIR / "features_A_full.pkl")
+    out_fa = fa.astype({c: "float32" for c in fcols})
+    # pandas 3 stores text columns as StringDtype, which pandas 2 cannot unpickle. Force plain
+    # object dtype so the dashboard reads this file whichever major version the user installed.
+    for c in out_fa.columns:
+        if out_fa[c].dtype == object or str(out_fa[c].dtype).startswith("string"):
+            out_fa[c] = out_fa[c].astype(object)
+    out_fa.to_pickle(ARTIFACT_DIR / "features_A_full.pkl", protocol=4)
 
     # 6-7. train + evaluate with 5-fold patient-grouped cross-validation ------------------------
     folds = assign_folds(ehr, K)
@@ -360,6 +366,11 @@ def main(quick=False, tag: str = ""):
                            risk={"p_hypo": float(np.nan_to_num(preds["A_full_hypo"][i, -60])),
                                  "p_hyper": float(np.nan_to_num(preds["A_full_hyper"][i, -60]))})
         json.dump(b, open(DATA_DIR / "fhir" / f"{pid}.json", "w"), indent=1, default=str)
+
+    # record which libraries wrote these artefacts, so a later run with a different pandas or
+    # scikit-learn is caught by scripts/check_build_env.py instead of failing in the dashboard
+    from check_build_env import write_stamp
+    write_stamp()
 
     metrics["runtime_sec"] = round(time.time() - t0, 1)
     out_path = REPORT_DIR / f"metrics{tag}.json"
