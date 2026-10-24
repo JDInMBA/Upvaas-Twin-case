@@ -34,7 +34,7 @@ def load_ehr(path_or_dict) -> pd.DataFrame:
 def streams_from_csv(path: str) -> tuple[dict, pd.DatetimeIndex]:
     df = pd.read_csv(path, parse_dates=["timestamp"]).set_index("timestamp").sort_index()
     start = df.index[0].normalize()
-    end = df.index[-1].normalize() + pd.Timedelta(days=1)
+    end = df.index[-1].normalize() + pd.Timedelta(1, unit="D")
     idx = pd.date_range(start, end, freq="5min", inclusive="left")
     g = df["glucose_mgdl"].resample("5min").mean().reindex(idx)
     T5 = len(idx)

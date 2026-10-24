@@ -24,8 +24,16 @@ STAMP = ARTIFACT_DIR / "BUILD_ENV.json"
 
 
 def current() -> dict:
-    import pandas
-    import sklearn
+    try:
+        import pandas
+        import sklearn
+    except ImportError:
+        # Almost always means this was run with the system interpreter instead of the project's.
+        sys.exit("pandas and scikit-learn are not installed for this interpreter "
+                 f"({sys.executable}).\n"
+                 "Use the project's virtual environment:\n"
+                 "  .venv/bin/python scripts/check_build_env.py\n"
+                 "or just:  make env")
     return {"python": ".".join(str(v) for v in sys.version_info[:2]),
             "pandas": pandas.__version__, "sklearn": sklearn.__version__}
 

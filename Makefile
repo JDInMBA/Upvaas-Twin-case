@@ -3,7 +3,7 @@ PY ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 # bit-exact reproducibility (see run.sh)
 export OMP_NUM_THREADS = 1
 
-.PHONY: setup pipeline quick serve test figures architecture presentation screens ablations external fhir all
+.PHONY: setup pipeline quick serve env test figures architecture presentation screens ablations external fhir all
 
 setup:            ## create a virtual environment and install dependencies
 	$(PY) -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
@@ -23,6 +23,9 @@ ablations:        ## what an easier benchmark would have scored (-> reports/BENC
 
 serve:            ## clinician dashboard on http://localhost:8000
 	$(PY) serve.py
+
+env:              ## confirm the artefacts match the installed libraries
+	$(PY) scripts/check_build_env.py
 
 test:
 	$(PY) -m pytest -q tests
