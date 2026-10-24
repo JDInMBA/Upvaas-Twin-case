@@ -46,6 +46,8 @@ jobs:
       - name: Architecture diagram and slide deck build from the metrics file
         run: |
           python docs/make_architecture.py
+          # python-pptx is a developer-only dependency, so it is not in requirements.txt
+          pip install python-pptx
           cp reports/metrics_ci.json reports/metrics.json
           python docs/make_presentation.py
 
