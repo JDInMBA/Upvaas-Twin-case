@@ -39,7 +39,7 @@ Numbers above are regenerated from [`reports/metrics.json`](reports/metrics.json
 | **Team leader** | Jay Raviraj Deore · jay.deore2027@sims.edu · 9307842683 |
 | **Project title** | UPVAAS-Twin: festival- and fasting-aware digital twin for predicting sulfonylurea-related hypoglycaemia and post-fast hyperglycaemia in Indian type 2 diabetes |
 | **Condition and adverse events** | Type 2 diabetes. Hypoglycaemia (&lt;70 mg/dL) and hyperglycaemia (&gt;250 mg/dL), each predicted two hours ahead |
-| **Demo video (15–20 min)** | VIDEO_LINK_HERE |
+| **Demo video** | **https://youtu.be/KRhAWehwGMg** (unlisted) |
 | **Presentation (PPT)** | [docs/presentation.pptx](docs/presentation.pptx) |
 | **Architecture diagram (PDF)** | [docs/architecture.pdf](docs/architecture.pdf) |
 | **Open-source licence** | MIT, see [LICENSE](LICENSE). Generated synthetic data released under CC0 1.0 |
